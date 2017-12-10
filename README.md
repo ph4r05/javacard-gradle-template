@@ -1,5 +1,7 @@
 # JavaCard Template project with Gradle
 
+[![Build Status](https://travis-ci.org/ph4r05/javacard-gradle-template.svg?branch=master)](https://travis-ci.org/ph4r05/javacard-gradle-template)
+
 This is simple JavaCard project template using Gradle build system.
 
 You can develop your JavaCard applets and build cap files with the Gradle!
@@ -7,8 +9,17 @@ Moreover the project template enables you to test the applet with [JCardSim] or 
 
 Gradle project contains 2 modules:
 
-- applet: contains the javacard applet. This one is buildable to CAP file.
-- tester: contains helper classes and main Test class which uses the main applet file.
+- `applet`: contains the javacard applet. This one is buildable to CAP file.
+- `tester`: contains helper classes and main Test class which uses the main applet file.
+
+Features:
+ - Gradle build (CLI / IntelliJ Idea)
+ - Build CAP for applets
+ - Test applet code in [JCardSim] / physical cards
+ - IntelliJ Idea: Coverage
+ - Travis support 
+
+### Template
 
 The template contains simple Hello World applet generating random bytes on any APDU message received.
 There is also implemented very simple test that sends static APDU command to this applet - in JCardSim.
@@ -16,15 +27,6 @@ There is also implemented very simple test that sends static APDU command to thi
 The Gradle project can be opened and run in the IntelliJ Idea.
 
 Running in IntelliJ Idea gives you a nice benefit: *Coverage*!
-
-Thanks to Martin Paljak's [ant-javacard] and [oracle_javacard_sdks] we support:
-
-- JavaCard 2.1.2
-- JavaCard 2.2.1
-- JavaCard 2.2.2
-- JavaCard 3.0.3
-- JavaCard 3.0.4
-- JavaCard 3.0.5u1
 
 ## How to use
 
@@ -113,6 +115,16 @@ This project uses mainly:
 
 Big kudos for a great work!
 
+### JavaCard support
+
+Thanks to Martin Paljak's [ant-javacard] and [oracle_javacard_sdks] we support:
+
+- JavaCard 2.1.2
+- JavaCard 2.2.1
+- JavaCard 2.2.2
+- JavaCard 3.0.3
+- JavaCard 3.0.4
+- JavaCard 3.0.5u1
 
 ## Coverage
 

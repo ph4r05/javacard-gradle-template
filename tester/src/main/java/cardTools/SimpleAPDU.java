@@ -32,7 +32,7 @@ public class SimpleAPDU {
         }
     }
 
-    public static void demoSingleCommand() throws Exception {
+    public static ResponseAPDU demoSingleCommand() throws Exception {
         final CardManager cardMngr = new CardManager(true, APPLET_AID_BYTE);
         final RunConfig runCfg = RunConfig.getDefaultConfig();
 
@@ -47,20 +47,34 @@ public class SimpleAPDU {
 
         System.out.print("Connecting to card...");
         if (!cardMngr.Connect(runCfg)) {
-            return;
+            return null;
         }
         System.out.println(" Done.");
 
-        sendCommandWithInitSequence(cardMngr, STR_APDU_DUMMY, null);
+        final ResponseAPDU response = sendCommandWithInitSequence(cardMngr, STR_APDU_DUMMY, null);
+        System.out.println(response);
+
+        return response;
     }
 
-    public static void sendCommandWithInitSequence(CardManager cardMngr, String command, ArrayList<String>  initCommands) throws CardException {
+    /**
+     * Sending command to the card.
+     * Enables to send init commands before the main one.
+     *
+     * @param cardMngr
+     * @param command
+     * @param initCommands
+     * @return
+     * @throws CardException
+     */
+    public static ResponseAPDU sendCommandWithInitSequence(CardManager cardMngr, String command, ArrayList<String>  initCommands) throws CardException {
         if (initCommands != null) {
             for (String cmd : initCommands) {
                 cardMngr.m_channel.transmit(new CommandAPDU(Util.hexStringToByteArray(cmd)));
             }
         }
         ResponseAPDU resp = cardMngr.m_channel.transmit(new CommandAPDU(Util.hexStringToByteArray(command)));
+        return resp;
     }
 
 }

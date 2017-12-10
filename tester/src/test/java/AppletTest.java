@@ -1,5 +1,8 @@
 import cardTools.SimpleAPDU;
+import org.junit.Assert;
 import org.testng.annotations.*;
+
+import javax.smartcardio.ResponseAPDU;
 
 /**
  * Example test class for the applet
@@ -31,6 +34,9 @@ public class AppletTest {
     // Example test
     @Test
     public void hello() throws Exception {
-        SimpleAPDU.demoSingleCommand();
+        final ResponseAPDU responseAPDU = SimpleAPDU.demoSingleCommand();
+        Assert.assertNotNull(responseAPDU);
+        Assert.assertEquals(0x9000, responseAPDU.getSW());
+        Assert.assertNotNull(responseAPDU.getBytes());
     }
 }

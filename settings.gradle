@@ -1,0 +1,4 @@
+rootProject.name = 'jcard'
+include 'applet'
+include 'tester'
+

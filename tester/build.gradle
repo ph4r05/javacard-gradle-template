@@ -1,0 +1,43 @@
+group 'aaop'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs '../libs'
+    }
+}
+
+dependencies {
+    compile (project(':applet')) {
+        // Remove transitive dependencies to avoid clashes on simulator vs javacard.
+        transitive = false
+    }
+
+    compile name: 'jcardsim-3.0.5-SNAPSHOT'
+    compile fileTree(dir: '../libs/globalplatform-2_1_1', include: '*.jar')
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile 'org.testng:testng:6.1.1'
+}
+
+test {
+    useTestNG()
+
+    jvmArgs '-noverify'
+
+    // listen to events in the test execution lifecycle
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: " + descriptor)
+    }
+}
+
+
+task runSimple(type: JavaExec, dependsOn: 'classes') {
+    main = 'cardTools.SimpleAPDU'
+    classpath = configurations.runtime
+}

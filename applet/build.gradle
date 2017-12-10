@@ -1,0 +1,74 @@
+group 'aaop'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+
+// Applet id for the CAP
+def appletId = '482871D58AB7465E5E05'
+
+// Common settings, definitions
+def curProjectDir = projectDir.absolutePath
+def capOutDir = new File(curProjectDir + '/out/cap')
+
+def libs = curProjectDir + '/../libs'
+def libsSdk = curProjectDir + '/../libs-sdks'
+
+def JC303 = libsSdk + '/jc305u1_kit'
+def GP211 = libs + '/globalplatform-2_1_1'
+
+// Maven repository + local libs file
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs libs
+    }
+}
+
+configurations {
+    ant_javacard
+}
+
+dependencies {
+    ant_javacard name: 'ant-javacard'
+
+    compile fileTree(dir: libs + '/globalplatform-2_1_1', include: '*.jar')
+    compile fileTree(dir: JC303 + '/lib', include: '*.jar')
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+// Ant task definition for building CAP files
+ant.taskdef(name: 'javacard',
+        classname: 'pro.javacard.ant.JavaCard',
+        classpath: configurations.ant_javacard.asPath
+)
+
+// Gradle task for building cap files.
+// Current version builds one cap file for the main applet.
+task cap {
+    def appletCapFile = capOutDir.absolutePath + '/applet.cap'
+
+    inputs.files(fileTree("src/main/java"))
+    outputs.dir(capOutDir)
+    outputs.file(appletCapFile)
+
+    doLast {
+        capOutDir.mkdirs()
+
+        // ANT javacard task wrapper, using https://github.com/martinpaljak/ant-javacard
+        ant.javacard(jckit: JC303) {
+
+            // Here you can define more than one CAP file to be generated.
+            // The source directory + package has to be specified manually at the moment.
+            cap(output: appletCapFile,
+                    sources: 'src/main/java/applet')
+            {
+                // Main applet file definition + applet ID
+                applet(class: 'applet.MainApplet', aid: appletId);
+                jimport(exps: GP211, jar: GP211 + '/gp211.jar');
+            }
+        }
+    }
+}

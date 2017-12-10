@@ -5,7 +5,7 @@ apply plugin: 'java'
 
 sourceCompatibility = 1.7
 
-// Applet id for the CAP
+// Applet id for the CAP - pick yours
 def appletId = '482871D58AB7465E5E05'
 
 // Common settings, definitions
@@ -15,8 +15,17 @@ def capOutDir = new File(curProjectDir + '/out/cap')
 def libs = curProjectDir + '/../libs'
 def libsSdk = curProjectDir + '/../libs-sdks'
 
-def JC303 = libsSdk + '/jc305u1_kit'
+// JavaCard SDKs and libraries
+def JC212 = libsSdk + '/jc212_kit'
+def JC221 = libsSdk + '/jc221_kit'
+def JC222 = libsSdk + '/jc222_kit'
+def JC303 = libsSdk + '/jc303_kit'
+def JC304 = libsSdk + '/jc304_kit'
+def JC305 = libsSdk + '/jc305u1_kit'
 def GP211 = libs + '/globalplatform-2_1_1'
+
+// Which JavaCard SDK to use
+def JC_SELECTED = JC305
 
 // Maven repository + local libs file
 repositories {
@@ -34,7 +43,7 @@ dependencies {
     ant_javacard name: 'ant-javacard'
 
     compile fileTree(dir: libs + '/globalplatform-2_1_1', include: '*.jar')
-    compile fileTree(dir: JC303 + '/lib', include: '*.jar')
+    compile fileTree(dir: JC_SELECTED + '/lib', include: '*.jar')
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
@@ -58,7 +67,7 @@ task cap {
         capOutDir.mkdirs()
 
         // ANT javacard task wrapper, using https://github.com/martinpaljak/ant-javacard
-        ant.javacard(jckit: JC303) {
+        ant.javacard(jckit: JC_SELECTED) {
 
             // Here you can define more than one CAP file to be generated.
             // The source directory + package has to be specified manually at the moment.

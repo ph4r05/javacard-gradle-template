@@ -13,6 +13,10 @@ Gradle project contains 2 modules:
 The template contains simple Hello World applet generating random bytes on any APDU message received.
 There is also implemented very simple test that sends static APDU command to this applet - in JCardSim.
 
+The Gradle project can be opened and run in the IntelliJ Idea.
+
+Running in IntelliJ Idea gives you a nice benefit: *Coverage*!
+
 ## How to use
 
 - Clone this template repository:
@@ -58,6 +62,24 @@ This project uses mainly:
 Big kudos for a great work!
 
 
+## Coverage
+
+This is a nice benefit of the IntelliJ Idea - gives you coverage 
+results out of the box. 
+
+You can see the test coverage on your applet code.
+
+- Go to Gradle plugin in IntelliJ Idea
+- Navigate to `:tester` project
+- Tasks -> verification -> test
+- Right click - run with coverage.
+
+Coverage summary:
+![coverage summary](https://raw.githubusercontent.com/ph4r05/javacard-gradle-template/master/.github/image/coverage_summary.png)
+
+Coverage code:
+![coverage code](https://raw.githubusercontent.com/ph4r05/javacard-gradle-template/master/.github/image/coverage_class.png)
+
 ## Troubleshooting
 
 If you experience the following error: 
@@ -73,6 +95,8 @@ java.lang.VerifyError: Expecting a stackmap frame at branch target 19
 
 Then try running JVM with `-noverify` option.
 
+In the IntelliJ Idea this can be configured in the top tool bar
+with run configurations combo box -> click -> Edit Configurations -> VM Options.
 
 [JCardSim]: https://jcardsim.org/
 

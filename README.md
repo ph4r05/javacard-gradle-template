@@ -17,6 +17,15 @@ The Gradle project can be opened and run in the IntelliJ Idea.
 
 Running in IntelliJ Idea gives you a nice benefit: *Coverage*!
 
+Thanks to Martin Paljak's [ant-javacard] and [oracle_javacard_sdks] we support:
+
+- JavaCard 2.1.2
+- JavaCard 2.2.1
+- JavaCard 2.2.2
+- JavaCard 3.0.3
+- JavaCard 3.0.4
+- JavaCard 3.0.5u1
+
 ## How to use
 
 - Clone this template repository:
@@ -141,8 +150,6 @@ Then try running JVM with `-noverify` option.
 In the IntelliJ Idea this can be configured in the top tool bar
 with run configurations combo box -> click -> Edit Configurations -> VM Options.
 
-[JCardSim]: https://jcardsim.org/
-
 ## Roadmap
 
 TODOs for this project:
@@ -154,4 +161,9 @@ TODOs for this project:
 
 Community feedback is highly appreciated - pull requests are welcome!
 
+
+
+[JCardSim]: https://jcardsim.org/
+[ant-javacard]: https://github.com/martinpaljak/ant-javacard
+[oracle_javacard_sdks]: https://github.com/martinpaljak/oracle_javacard_sdks
 

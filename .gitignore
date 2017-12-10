@@ -1,2 +1,9 @@
 .idea
+.gradle
 *.iml
+applet/out
+applet/build
+simulator/build
+simulator/out
+tester/build
+tester/out

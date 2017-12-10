@@ -60,14 +60,6 @@ Note: `--rerun-tasks` is to force re-run the task even though the cached input/o
 Typical output:
 
 ```
-:applet:cap (Thread[Task worker,5,main]) started.
-[ant:compile] /Users/dusanklinec/workspace/jcard/applet/src/main/java/applet/MainApplet.java:20: warning: [deprecation] ALG_SECURE_RANDOM in RandomData has been deprecated
-[ant:compile]           random = RandomData.getInstance(RandomData.ALG_SECURE_RANDOM);
-[ant:compile]                                                     ^
-[ant:compile] /Users/dusanklinec/workspace/jcard/applet/src/main/java/applet/MainApplet.java:33: warning: [deprecation] generateData(byte[],short,short) in RandomData has been deprecated
-[ant:compile]           random.generateData(tmpBuffer, (short) 0, BUFFER_SIZE);
-[ant:compile]                 ^
-[ant:compile] 2 warnings
 [ant:cap] [ INFO: ] Converter [v3.0.5]
 [ant:cap] [ INFO: ]     Copyright (c) 1998, 2015, Oracle and/or its affiliates. All rights reserved.
 [ant:cap]     

@@ -6,26 +6,25 @@ apply plugin: 'java'
 sourceCompatibility = 1.7
 
 // Applet id for the CAP - pick yours
-def appletId = '482871D58AB7465E5E05'
+final def appletId = '482871D58AB7465E5E05'
 
 // Common settings, definitions
-def curProjectDir = projectDir.absolutePath
-def capOutDir = new File(curProjectDir + '/out/cap')
-
-def libs = curProjectDir + '/../libs'
-def libsSdk = curProjectDir + '/../libs-sdks'
+final def curProjectDir = projectDir.absolutePath
+final def capOutDir = new File(curProjectDir + '/out/cap')
+final def libs = curProjectDir + '/../libs'
+final def libsSdk = curProjectDir + '/../libs-sdks'
 
 // JavaCard SDKs and libraries
-def JC212 = libsSdk + '/jc212_kit'
-def JC221 = libsSdk + '/jc221_kit'
-def JC222 = libsSdk + '/jc222_kit'
-def JC303 = libsSdk + '/jc303_kit'
-def JC304 = libsSdk + '/jc304_kit'
-def JC305 = libsSdk + '/jc305u1_kit'
-def GP211 = libs + '/globalplatform-2_1_1'
+final def JC212 = libsSdk + '/jc212_kit'
+final def JC221 = libsSdk + '/jc221_kit'
+final def JC222 = libsSdk + '/jc222_kit'
+final def JC303 = libsSdk + '/jc303_kit'
+final def JC304 = libsSdk + '/jc304_kit'
+final def JC305 = libsSdk + '/jc305u1_kit'
+final def GP211 = libs + '/globalplatform-2_1_1'
 
-// Which JavaCard SDK to use
-def JC_SELECTED = JC305
+// Which JavaCard SDK to use - select
+final def JC_SELECTED = JC305
 
 // Maven repository + local libs file
 repositories {
@@ -57,7 +56,7 @@ ant.taskdef(name: 'javacard',
 // Gradle task for building cap files.
 // Current version builds one cap file for the main applet.
 task cap {
-    def appletCapFile = capOutDir.absolutePath + '/applet.cap'
+    final def appletCapFile = capOutDir.absolutePath + '/applet.cap'
 
     inputs.files(fileTree("src/main/java"))
     outputs.dir(capOutDir)

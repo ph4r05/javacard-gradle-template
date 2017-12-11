@@ -45,9 +45,14 @@ git submodule update
 
 - Implement tests in the `tester` module.
 
+- Run Gradle wrapper `./gradlew` on Unix-like system or `./gradlew.bat` on Windows
+to build the project for the first time (Gradle will be downloaded if not installed).
+
 ## Building cap
 
 - Setup your Applet ID (`AID`) in the `./applet/build.gradle` variable `appletId`.
+
+- Run the `cap` task:
 
 ```
 ./gradlew cap  --info --rerun-tasks

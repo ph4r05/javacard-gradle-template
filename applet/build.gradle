@@ -41,7 +41,7 @@ configurations {
 dependencies {
     ant_javacard group: 'com.klinec', name: 'ant-javacard', version: '1.8.0'
 
-    compile fileTree(dir: libs + '/globalplatform-2_1_1', include: '*.jar')
+    compile fileTree(dir: GP211, include: '*.jar')
     compile fileTree(dir: JC_SELECTED + '/lib', include: '*.jar')
 
     testCompile group: 'junit', name: 'junit', version: '4.12'

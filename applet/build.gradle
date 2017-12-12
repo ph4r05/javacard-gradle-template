@@ -57,8 +57,9 @@ ant.taskdef(name: 'javacard',
 // Current version builds one cap file for the main applet.
 task cap {
     final def appletCapFile = capOutDir.absolutePath + '/applet.cap'
+    final def javaDir = sourceSets.main.java.srcDirs[0].toString(); // src/main/java
 
-    inputs.files(fileTree("src/main/java"))
+    inputs.files(fileTree(javaDir))
     outputs.dir(capOutDir)
     outputs.file(appletCapFile)
 
@@ -70,8 +71,7 @@ task cap {
 
             // Here you can define more than one CAP file to be generated.
             // The source directory + package has to be specified manually at the moment.
-            cap(output: appletCapFile,
-                    sources: 'src/main/java/applet')
+            cap(output: appletCapFile, sources: javaDir)
             {
                 // Main applet file definition + applet ID
                 applet(class: 'applet.MainApplet', aid: appletId);

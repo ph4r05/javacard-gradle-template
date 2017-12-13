@@ -70,10 +70,10 @@ public class SimpleAPDU {
     public static ResponseAPDU sendCommandWithInitSequence(CardManager cardMngr, String command, ArrayList<String>  initCommands) throws CardException {
         if (initCommands != null) {
             for (String cmd : initCommands) {
-                cardMngr.m_channel.transmit(new CommandAPDU(Util.hexStringToByteArray(cmd)));
+                cardMngr.getChannel().transmit(new CommandAPDU(Util.hexStringToByteArray(cmd)));
             }
         }
-        ResponseAPDU resp = cardMngr.m_channel.transmit(new CommandAPDU(Util.hexStringToByteArray(command)));
+        ResponseAPDU resp = cardMngr.getChannel().transmit(new CommandAPDU(Util.hexStringToByteArray(command)));
         return resp;
     }
 

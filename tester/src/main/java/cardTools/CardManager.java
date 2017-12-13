@@ -13,50 +13,55 @@ import java.util.List;
  * @author Petr Svenda
  */
 public class CardManager {
-    boolean     m_bDebug = false;
-    byte[]      m_APPLET_AID = null;
-    Long        m_lastTransmitTime = (long) 0;
-    CommandAPDU m_lastCommand = null;
-    CardChannel m_channel = null;
-    
+    protected boolean bDebug = false;
+    protected byte[] appletId = null;
+    protected Long lastTransmitTime = (long) 0;
+    protected CommandAPDU lastCommand = null;
+    protected CardChannel channel = null;
+
     public CardManager(boolean bDebug, byte[] appletAID) {
-        this.m_bDebug = bDebug;
-        this.m_APPLET_AID = appletAID;
+        this.bDebug = bDebug;
+        this.appletId = appletAID;
     }
-            
-    // Card Logistics
+
+    /**
+     * Card connect
+     * @param runCfg
+     * @return
+     * @throws Exception
+     */
     public boolean Connect(RunConfig runCfg) throws Exception {
         boolean bConnected = false;
         switch (runCfg.testCardType) {
             case PHYSICAL: {
-                m_channel = ConnectPhysicalCard(runCfg.targetReaderIndex);
+                channel = ConnectPhysicalCard(runCfg.targetReaderIndex);
                 break;
             }
             case JCOPSIM: {
-                m_channel = ConnectJCOPSimulator(runCfg.targetReaderIndex);
+                channel = ConnectJCOPSimulator(runCfg.targetReaderIndex);
                 break;
             }
             case JCARDSIMLOCAL: {
-                m_channel = ConnectJCardSimLocalSimulator(runCfg.appletToSimulate, runCfg.installData);
+                channel = ConnectJCardSimLocalSimulator(runCfg.appletToSimulate, runCfg.installData);
                 break;
             }
             case JCARDSIMREMOTE: {
-                m_channel = null; // Not implemented yet
+                channel = null; // Not implemented yet
                 break;
             }
             default:
-                m_channel = null;
+                channel = null;
                 bConnected = false;
-                
+
         }
-        if (m_channel != null) {
+        if (channel != null) {
             bConnected = true;
         }
         return bConnected;
     }
-    
+
     public void Disconnect(boolean bReset) throws CardException {
-        m_channel.getCard().disconnect(bReset); // Disconnect from the card
+        channel.getCard().disconnect(bReset); // Disconnect from the card
     }
 
     public CardChannel ConnectPhysicalCard(int targetReaderIndex) throws Exception {
@@ -79,7 +84,7 @@ public class CardManager {
         if (installData == null) {
             installData = new byte[0];
         }
-        AID appletAID = new AID(m_APPLET_AID, (short) 0, (byte) m_APPLET_AID.length);
+        AID appletAID = new AID(appletId, (short) 0, (byte) appletId.length);
 
         AID appletAIDRes = simulator.installApplet(appletAID, appletClass, installData, (short) 0, (byte) installData.length);
         simulator.selectApplet(appletAID);
@@ -116,14 +121,14 @@ public class CardManager {
             System.out.println(" Done.");
 
             System.out.print("Establishing channel...");
-            m_channel = card.getBasicChannel();
+            channel = card.getBasicChannel();
 
             System.out.println(" Done.");
 
             // Select applet (mpcapplet)
             System.out.println("Smartcard: Selecting applet...");
 
-            CommandAPDU cmd = new CommandAPDU(0x00, 0xa4, 0x04, 0x00, m_APPLET_AID);
+            CommandAPDU cmd = new CommandAPDU(0x00, 0xa4, 0x04, 0x00, appletId);
             ResponseAPDU response = transmit(cmd);
         } else {
             System.out.print("Failed to find physical card.");
@@ -135,22 +140,22 @@ public class CardManager {
             return null;
         }
     }
-    
+
     public ResponseAPDU transmit(CommandAPDU cmd)
             throws CardException {
 
-        m_lastCommand = cmd;
-        if (m_bDebug == true) {
+        lastCommand = cmd;
+        if (bDebug == true) {
             log(cmd);
         }
 
         long elapsed = -System.currentTimeMillis();
-        ResponseAPDU response = m_channel.transmit(cmd);
+        ResponseAPDU response = channel.transmit(cmd);
         elapsed += System.currentTimeMillis();
-        m_lastTransmitTime = elapsed;
+        lastTransmitTime = elapsed;
 
-        if (m_bDebug == true) {
-            log(response, m_lastTransmitTime);
+        if (bDebug == true) {
+            log(response, lastTransmitTime);
         }
 
         return response;
@@ -187,5 +192,49 @@ public class CardManager {
             terminals.waitForChange();
         }
     }
-    
+
+    public boolean isbDebug() {
+        return bDebug;
+    }
+
+    public byte[] getAppletId() {
+        return appletId;
+    }
+
+    public Long getLastTransmitTime() {
+        return lastTransmitTime;
+    }
+
+    public CommandAPDU getLastCommand() {
+        return lastCommand;
+    }
+
+    public CardChannel getChannel() {
+        return channel;
+    }
+
+    public CardManager setbDebug(boolean bDebug) {
+        this.bDebug = bDebug;
+        return this;
+    }
+
+    public CardManager setAppletId(byte[] appletId) {
+        this.appletId = appletId;
+        return this;
+    }
+
+    public CardManager setLastTransmitTime(Long lastTransmitTime) {
+        this.lastTransmitTime = lastTransmitTime;
+        return this;
+    }
+
+    public CardManager setLastCommand(CommandAPDU lastCommand) {
+        this.lastCommand = lastCommand;
+        return this;
+    }
+
+    public CardManager setChannel(CardChannel channel) {
+        this.channel = channel;
+        return this;
+    }
 }

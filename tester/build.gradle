@@ -2,8 +2,6 @@ group 'aaop'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
-apply plugin: 'application'
-applicationDefaultJvmArgs = ['-noverify']
 
 sourceCompatibility = 1.7
 
@@ -36,10 +34,4 @@ test {
     beforeTest { descriptor ->
         logger.lifecycle("Running test: " + descriptor)
     }
-}
-
-
-task runSimple(type: JavaExec, dependsOn: 'classes') {
-    main = 'cardTools.SimpleAPDU'
-    classpath = configurations.runtime
 }

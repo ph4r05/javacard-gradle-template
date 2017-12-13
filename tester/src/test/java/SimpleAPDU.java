@@ -1,6 +1,7 @@
-package cardTools;
-
 import applet.MainApplet;
+import cardTools.CardManager;
+import cardTools.RunConfig;
+import cardTools.Util;
 
 import javax.smartcardio.CardException;
 import javax.smartcardio.CommandAPDU;
@@ -37,13 +38,13 @@ public class SimpleAPDU {
         final RunConfig runCfg = RunConfig.getDefaultConfig();
 
         // Running on physical card
-        //runCfg.testCardType = RunConfig.CARD_TYPE.PHYSICAL;
+        //runCfg.setTestCardType(RunConfig.CARD_TYPE.PHYSICAL);
 
         // Running in the simulator
-        runCfg.appletToSimulate = MainApplet.class;
-        runCfg.testCardType = RunConfig.CARD_TYPE.JCARDSIMLOCAL;
-        runCfg.bReuploadApplet = true;
-        runCfg.installData = new byte[8];
+        runCfg.setAppletToSimulate(MainApplet.class)
+                .setTestCardType(RunConfig.CARD_TYPE.JCARDSIMLOCAL)
+                .setbReuploadApplet(true)
+                .setInstallData(new byte[8]);
 
         System.out.print("Connecting to card...");
         if (!cardMngr.Connect(runCfg)) {
@@ -73,7 +74,8 @@ public class SimpleAPDU {
                 cardMngr.getChannel().transmit(new CommandAPDU(Util.hexStringToByteArray(cmd)));
             }
         }
-        ResponseAPDU resp = cardMngr.getChannel().transmit(new CommandAPDU(Util.hexStringToByteArray(command)));
+
+        final ResponseAPDU resp = cardMngr.getChannel().transmit(new CommandAPDU(Util.hexStringToByteArray(command)));
         return resp;
     }
 

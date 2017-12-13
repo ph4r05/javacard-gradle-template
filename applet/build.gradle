@@ -48,6 +48,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile 'org.testng:testng:6.1.1'
 
+    testCompile group: 'com.klinec', name: 'javacard-tools', version: '0.0.1', transitive: false
     testCompile group: 'com.klinec', name: 'jcardsim', version: '3.0.4', transitive: false
 }
 

@@ -9,10 +9,11 @@ sourceCompatibility = 1.7
 final def appletId = '482871D58AB7465E5E05'
 
 // Common settings, definitions
+final def rootPath = rootDir.absolutePath
 final def curProjectDir = projectDir.absolutePath
 final def capOutDir = new File(curProjectDir + '/out/cap')
-final def libs = curProjectDir + '/../libs'
-final def libsSdk = curProjectDir + '/../libs-sdks'
+final def libs = rootPath + '/libs'
+final def libsSdk = rootPath + '/libs-sdks'
 
 // JavaCard SDKs and libraries
 final def JC212 = libsSdk + '/jc212_kit'
@@ -24,13 +25,13 @@ final def JC305 = libsSdk + '/jc305u1_kit'
 final def GP211 = libs + '/globalplatform-2_1_1'
 
 // Which JavaCard SDK to use - select
-final def JC_SELECTED = JC305
+final def JC_SELECTED = JC304
 
 // Maven repository + local libs file
 repositories {
     mavenCentral()
     flatDir {
-        dirs libs
+        dirs rootPath + '/libs'
     }
 }
 
@@ -45,6 +46,9 @@ dependencies {
     compile fileTree(dir: JC_SELECTED + '/lib', include: '*.jar')
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile 'org.testng:testng:6.1.1'
+
+    testCompile group: 'com.klinec', name: 'jcardsim', version: '3.0.4', transitive: false
 }
 
 // Ant task definition for building CAP files

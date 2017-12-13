@@ -1,36 +1,35 @@
 # JavaCard Libraries
 
-## `ant-javacard.jar`
+Local `*.jar` dependencies repository.
 
-Ant task for building JavaCard caps.
+You can add here local dependencies if there are not available on the 
+Maven central repository or you are not willing to use those.
 
-- Original source: https://github.com/martinpaljak/ant-javacard
-- My fork: https://github.com/ph4r05/ant-javacard
-- Pull request required this to work: https://github.com/martinpaljak/ant-javacard/pull/21
+If there is a `test.jar` file you can add it as a dependency
+by adding the following line to the `dependencies {}` block.
 
-License: MIT
+```gradle
+compile name: 'test'
+```
 
-TODO: add to maven
+This works only for JAR files placed right in the `/libs` directory.
+For subdirectories you have to use the `file()` or `fileTree` as demonstrated below.
 
-## `jcardsim-3.0.5`
-
-JCardSim - JavaCard simulator.
-
-- Original sources: 
-    - https://github.com/licel/jcardsim
-    - https://jcardsim.org/
-    
-License: Apache License 2.0
-
-TODO: add to maven
-
-## `globalplatform`
+## `globalplatform-2_1_1`
 
 Globalplatform libraries
+
+```gradle
+compile fileTree(dir: rootDir.absolutePath + '/globalplatform-2_1_1', include: '*.jar')
+```
 
 License: no idea
 
 ## `visa_openplatform`
+
+```gradle
+compile fileTree(dir: rootDir.absolutePath + '/visa_openplatform-2_0', include: '*.jar')
+```
 
 License: no idea
 

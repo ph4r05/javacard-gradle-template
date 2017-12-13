@@ -4,6 +4,6 @@ jdk:
   - oraclejdk8
 
 script:
-  - ./gradlew check
-  - ./gradlew cap
+  - ./gradlew check --info
+  - ./gradlew cap --info
 

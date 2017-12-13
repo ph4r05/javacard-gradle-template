@@ -25,7 +25,7 @@ final def JC305 = libsSdk + '/jc305u1_kit'
 final def GP211 = libs + '/globalplatform-2_1_1'
 
 // Which JavaCard SDK to use - select
-final def JC_SELECTED = JC304
+final def JC_SELECTED = JC305
 
 // Maven repository + local libs file
 repositories {
@@ -49,6 +49,11 @@ dependencies {
     testCompile 'org.testng:testng:6.1.1'
 
     testCompile group: 'com.klinec', name: 'jcardsim', version: '3.0.4', transitive: false
+}
+
+test {
+    useTestNG()
+    jvmArgs '-noverify'
 }
 
 // Ant task definition for building CAP files

@@ -33,12 +33,7 @@ Running in IntelliJ Idea gives you a nice benefit: *Coverage*!
 - Clone this template repository:
 
 ```
-git clone https://github.com/ph4r05/javacard-gradle-template.git
-
-# Initialize & fetch submodules
-cd javacard-gradle-template
-git submodule init
-git submodule update
+git clone --recursive https://github.com/ph4r05/javacard-gradle-template.git
 ```
 
 - Implement your applet in the `applet` module.

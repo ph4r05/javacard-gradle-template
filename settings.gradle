@@ -1,4 +1,4 @@
-rootProject.name = 'jcard'
+rootProject.name = 'cryptocard'
 include 'applet'
 include 'tester'
 

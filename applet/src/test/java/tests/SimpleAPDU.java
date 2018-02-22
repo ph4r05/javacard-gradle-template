@@ -1,3 +1,5 @@
+package tests;
+
 import applet.MainApplet;
 import cardTools.CardManager;
 import cardTools.RunConfig;

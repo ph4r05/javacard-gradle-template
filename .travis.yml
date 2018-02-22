@@ -5,5 +5,5 @@ jdk:
 
 script:
   - ./gradlew check --info
-  - ./gradlew cap --info
+  - ./gradlew buildJavaCard --info
 

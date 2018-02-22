@@ -1,17 +1,9 @@
 group 'aaop'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'java'
-
-sourceCompatibility = 1.7
-
-// Applet id for the CAP - pick yours
-final def appletId = '482871D58AB7465E5E05'
-
 // Common settings, definitions
 final def rootPath = rootDir.absolutePath
 final def curProjectDir = projectDir.absolutePath
-final def capOutDir = new File(curProjectDir + '/out/cap')
 final def libs = rootPath + '/libs'
 final def libsSdk = rootPath + '/libs-sdks'
 
@@ -22,12 +14,23 @@ final def JC222 = libsSdk + '/jc222_kit'
 final def JC303 = libsSdk + '/jc303_kit'
 final def JC304 = libsSdk + '/jc304_kit'
 final def JC305 = libsSdk + '/jc305u1_kit'
-final def GP211 = libs + '/globalplatform-2_1_1'
 
 // Which JavaCard SDK to use - select
-final def JC_SELECTED = JC305
+final def JC_SELECTED = JC304
 
-// Maven repository + local libs file
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'fr.bmartel:gradle-javacard:1.5.3'
+    }
+}
+
+apply plugin: 'javacard'
+sourceCompatibility = 1.7
+
 repositories {
     mavenCentral()
     flatDir {
@@ -35,21 +38,11 @@ repositories {
     }
 }
 
-configurations {
-    ant_javacard
-}
-
 dependencies {
-    ant_javacard group: 'com.klinec', name: 'ant-javacard', version: '1.8.0'
-
-    compile fileTree(dir: GP211, include: '*.jar')
-    compile fileTree(dir: JC_SELECTED + '/lib', include: '*.jar')
-
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile 'org.testng:testng:6.1.1'
 
     testCompile group: 'com.klinec', name: 'javacard-tools', version: '0.0.1', transitive: false
-    testCompile group: 'com.klinec', name: 'jcardsim', version: '3.0.4', transitive: false
 }
 
 test {
@@ -57,36 +50,21 @@ test {
     jvmArgs '-noverify'
 }
 
-// Ant task definition for building CAP files
-ant.taskdef(name: 'javacard',
-        classname: 'pro.javacard.ant.JavaCard',
-        classpath: configurations.ant_javacard.asPath
-)
+javacard {
 
-// Gradle task for building cap files.
-// Current version builds one cap file for the main applet.
-task cap {
-    final def appletCapFile = capOutDir.absolutePath + '/applet.cap'
-    final def javaDir = sourceSets.main.java.srcDirs[0].toString(); // src/main/java
+    config {
+        jckit JC_SELECTED
 
-    inputs.files(fileTree(javaDir))
-    outputs.dir(capOutDir)
-    outputs.file(appletCapFile)
-
-    doLast {
-        capOutDir.mkdirs()
-
-        // ANT javacard task wrapper, using https://github.com/martinpaljak/ant-javacard
-        ant.javacard(jckit: JC_SELECTED) {
-
-            // Here you can define more than one CAP file to be generated.
-            // The source directory + package has to be specified manually at the moment.
-            cap(output: appletCapFile, sources: javaDir)
-            {
-                // Main applet file definition + applet ID
-                applet(class: 'applet.MainApplet', aid: appletId);
-                jimport(exps: GP211, jar: GP211 + '/gp211.jar');
+        cap {
+            packageName 'applet'
+            version '0.1'
+            aid '01:02:03:04:05:06:07:08:09'
+            output 'applet.cap'
+            applet {
+                className 'applet.MainApplet'
+                aid '01:02:03:04:05:06:07:08:09:01:02'
             }
         }
     }
 }
+

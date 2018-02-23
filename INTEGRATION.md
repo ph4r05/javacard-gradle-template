@@ -48,15 +48,15 @@ sure the template works before doing major changes.
 
 ## Variant B - Maintained code
 
-With maintained code it is a bit difficult as we usually want to 
-pull-request our changes to the original repository. In that case we cannot use
+With maintained code, it is a bit difficult as we usually want to 
+pull-request our changes to the original repository. In that case, we cannot use
 the copy variant A as the git history will be lost and the pull request cannot be created. 
   
 Depending on the project size we have another two options:
 
 ### B.1 Use template project structure
 
-In this case we change the existing project structure and we 
+In this case, we change the existing project structure and we 
 basically transform it to the structure of the template. 
 
 It would go like this:
@@ -67,23 +67,23 @@ It would go like this:
 - Modify `applet/build.gradle`, define CAP file parameters as previously defined, probably in `pom.xml` (Maven) or `build.xml` (Ant)
 
 
-This approach is obviously suitable for simple / small projects lacking proper gradle support. 
-If the project is big and actively maintained owners probably wont be very cheerful to change the whole project structure
+This approach is obviously suitable for simple/small projects lacking proper gradle support. 
+If the project is big and actively maintained owners probably won't be very cheerful to change the whole project structure
 and another approach has to be chosen.
 
 
 ### B.2 Non-intrusive gradle extension
 
 This variant is very lightweight in term of the original repository modifications. 
-We basically add only minimal gradle-related files to the project keeping the original
-project structure intact. This will require to adapt gradle paths a bit but the benefit
+We add only minimal gradle-related files to the project keeping the original
+project structure intact. This will require adapting gradle paths a bit but the benefit
 is the original project can work simultaneously in multiple build environments 
-and the modifications are small thus probability of a successful merge is easier. 
+and the modifications are small thus the probability of a successful merge is easier. 
 The downside is there is no wrapping gradle root module which does not have to
-be a blocker and this issue can be addressed later when project grows large. 
+be a blocker, and this issue can be addressed later when the project grows large. 
 
  
-I will demonstrate this on the example:
+I will demonstrate this in the example:
 https://github.com/sgamerith/javacard-calculator
 
 #### 1. Fork the project.
@@ -102,7 +102,7 @@ git submodule add https://github.com/martinpaljak/oracle_javacard_sdks.git libs-
 
 The SDKs are required to build CAP files from the applet.
 
-SDKs can be also in your home dir or outside the project structure, depends on your consideration.
+SDKs can also be in your home dir or outside the project structure, depends on your consideration.
 The gradle script will have to be changed to reflect the SDK directory location. 
 Current version assumes SDKs are in the `libs-sdks` directory in the project root. 
 If the `jckit` property is not set manually in the `build.gradle` 
@@ -119,7 +119,7 @@ build.gradle
 
 The source paths with java files have to be set if it differs from the default gradle paths.
 
-This particular project has source paths as gradle expects so no additional configuration is needed.
+This particular project has source paths as gradle expects, so no additional configuration is needed.
 
 For next steps follow steps 6-9 inclusive from the following list.
 
@@ -131,11 +131,11 @@ Take a look at commits to see the performed modifications.
 
 ### B.3 Git submodule approach
 
-If you feel that changing the project structure won't be merged via pull request it has to be done a bit differently.
+If you feel that changing the project structure won't be merged via pull request, it has to be done a bit differently.
 This approach preserves existing project structure by embedding the project into the template project
 which acts as a wrapper. The existing project is added to the wrapper as a [git-submodule].
 
-I will demonstrate this on the example:
+I will demonstrate this in the example:
 https://github.com/sgamerith/javacard-calculator
 
 #### 1. Fork the project.
@@ -203,8 +203,8 @@ We have to adjust gradle source paths (folders with java files / packages) a bit
 we placed the project as a submodule which has source files on a different place
 than gradle expects by default. 
 
-The main reason is we wrapped the whole project
-in the `project` folder. However this approach is flexible as we don't need 
+The main reason is that we wrapped the whole project
+in the `project` folder. However, this approach is flexible as we don't need 
 the project to follow some standard folder hierarchy.
 
 Update `applet/build.gradle`: Add the following piece of 
@@ -233,7 +233,7 @@ This configures gradle source directories.
 If you are using IntelliJ Idea press Gradle refresh button so 
 Idea gets a new file layout also.
 
-Gradle refresh button: right hand side vertical bar -> Gradle -> Blue refresh button.
+Gradle refresh button: right-hand side vertical bar -> Gradle -> Blue refresh button.
 
 
 #### 7. Fix the project
@@ -245,7 +245,7 @@ In this particular case a dependency is missing. CalculatorTest.java is missing
 By Googling you may find the following page
 https://mvnrepository.com/artifact/org.apache.commons/commons-lang3/3.0
 
-Which suggests to add the following line to the `applet/build.gradle` to the `dependencies` section
+Which suggests adding the following line to the `applet/build.gradle` to the `dependencies` section
 
 ```groovy
 dependencies{
@@ -261,7 +261,7 @@ Now the project is still broken. The culprit is the following line:
 ResponseAPDU actual = simulator.transmitCommand(commandAPDU);
 ```
 
-Obviously the simulator contract for the method `transmitCommand` has changed.
+Obviously, the simulator contract for the method `transmitCommand` has changed.
 We change it to the following form:
 
 ```java

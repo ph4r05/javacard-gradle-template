@@ -213,7 +213,7 @@ git push origin master
 
 #### Demo
 
-https://github.com/ph4r05-edu/javacard-calculator-wrapper
-https://github.com/ph4r05-edu/javacard-calculator 
+- https://github.com/ph4r05-edu/javacard-calculator-wrapper
+- https://github.com/ph4r05-edu/javacard-calculator 
 
 [git-submodule]: https://git-scm.com/docs/git-submodule

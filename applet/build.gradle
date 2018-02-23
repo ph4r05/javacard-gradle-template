@@ -6,10 +6,9 @@ version '1.0-SNAPSHOT'
 buildscript {
     repositories {
         mavenCentral()
-        // mavenLocal()
     }
     dependencies {
-        classpath 'com.klinec:gradle-javacard:1.5.4'
+        classpath 'com.klinec:gradle-javacard:1.5.5'
     }
 }
 
@@ -24,6 +23,7 @@ final def libsSdk = rootPath + '/libs-sdks'
 // Repositories for your project
 repositories {
     mavenCentral()
+    // mavenLocal() // for local maven repository if needed
     flatDir {
         dirs libs
     }

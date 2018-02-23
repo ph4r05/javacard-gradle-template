@@ -16,6 +16,36 @@ do the job.
 - Clone this template
 - Copy the java files to `applet/src/main/java`.
 
+#### 1. Clone the template 
+Clone the template repository to a new directory.
+
+```bash
+git clone --recursive git@github.com:crocs-muni/javacard-gradle-template-edu.git javacard-calculator-wrapper
+```
+
+We now reinitialize the git history of the template. The reason is
+you typically want to have a clean commit history without unrelated template commits.
+
+```bash
+cd javacard-calculator-wrapper
+rm -rf .git
+rm -rf libs-sdks/
+git init
+git add .
+git commit -m 'Initial commit'
+git submodule add https://github.com/martinpaljak/oracle_javacard_sdks.git libs-sdks
+git add libs-sdks
+git commit -m 'SDKs added'
+```
+
+#### 2. Test the template. 
+The command will download all required dependencies. We make
+sure the template works before doing major changes. 
+
+```bash
+./gradlew test
+```
+
 ## Variant B - Maintained code
 
 With maintained code it is a bit difficult as we usually want to 

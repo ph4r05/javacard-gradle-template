@@ -72,7 +72,64 @@ If the project is big and actively maintained owners probably wont be very cheer
 and another approach has to be chosen.
 
 
-### B.2 Git submodule approach
+### B.2 Non-intrusive gradle extension
+
+This variant is very lightweight in term of the original repository modifications. 
+We basically add only minimal gradle-related files to the project keeping the original
+project structure intact. This will require to adapt gradle paths a bit but the benefit
+is the original project can work simultaneously in multiple build environments 
+and the modifications are small thus probability of a successful merge is easier. 
+The downside is there is no wrapping gradle root module which does not have to
+be a blocker and this issue can be addressed later when project grows large. 
+
+ 
+I will demonstrate this on the example:
+https://github.com/sgamerith/javacard-calculator
+
+#### 1. Fork the project.
+Fork the javacard-calculator repository to your account. 
+This step is required so you can work with the existing maintained code, 
+submit pull requests, etc.
+
+My fork I use in this description is here (you will obviously use your fork address):
+https://github.com/ph4r05-edu/javacard-calculator
+
+#### 2. Add JavaCard SDK submodules:
+
+```
+git submodule add https://github.com/martinpaljak/oracle_javacard_sdks.git libs-sdks
+```
+
+The SDKs are required to build CAP files from the applet.
+
+SDKs can be also in your home dir or outside the project structure, depends on your consideration.
+The gradle script will have to be changed to reflect the SDK directory location. 
+Current version assumes SDKs are in the `libs-sdks` directory in the project root. 
+If the `jckit` property is not set manually in the `build.gradle` 
+the `JC_HOME` environment variable with the SDK directory will be used.
+
+#### 3. Copy `build.gradle`
+Copy the main gradle files:
+```
+./gradle
+./gradlew
+./gradlew.bat
+build.gradle
+```
+
+The source paths with java files have to be set if it differs from the default gradle paths.
+
+This particular project has source paths as gradle expects so no additional configuration is needed.
+
+For next steps follow steps 6-9 inclusive from the following list.
+
+#### Demo
+
+The result of this scenario is in this repo: https://github.com/ph4r05/javacard-calculator-gradle
+
+Take a look at commits to see the performed modifications.
+
+### B.3 Git submodule approach
 
 If you feel that changing the project structure won't be merged via pull request it has to be done a bit differently.
 This approach preserves existing project structure by embedding the project into the template project

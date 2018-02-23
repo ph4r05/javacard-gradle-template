@@ -54,7 +54,7 @@ the copy variant A as the git history will be lost and the pull request cannot b
   
 Depending on the project size we have another two options:
 
-### B.1 Use template project structure
+### B.1 Use the template project structure
 
 In this case, we change the existing project structure and we 
 basically transform it to the structure of the template. 
@@ -92,7 +92,7 @@ This step is required so you can work with the existing maintained code,
 submit pull requests, etc.
 
 My fork I use in this description is here (you will obviously use your fork address):
-https://github.com/ph4r05-edu/javacard-calculator
+https://github.com/ph4r05-edu/javacard-calculator-gradle
 
 #### 2. Add JavaCard SDK submodules:
 
@@ -125,7 +125,7 @@ For next steps follow steps 6-9 inclusive from the following list.
 
 #### Demo
 
-The result of this scenario is in this repo: https://github.com/ph4r05/javacard-calculator-gradle
+The result of this scenario is in this repo: https://github.com/ph4r05-edu/javacard-calculator-gradle
 
 Take a look at commits to see the performed modifications.
 

@@ -1,6 +1,6 @@
 # JavaCard Template project with Gradle
 
-[![Build Status](https://travis-ci.org/ph4r05/javacard-gradle-template.svg?branch=master)](https://travis-ci.org/ph4r05/javacard-gradle-template)
+[![Build Status](https://travis-ci.org/crocs-muni/javacard-gradle-template-edu.svg?branch=master)](https://travis-ci.org/crocs-muni/javacard-gradle-template-edu)
 
 This is simple JavaCard project template using Gradle build system.
 

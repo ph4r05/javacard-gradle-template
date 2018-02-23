@@ -55,6 +55,7 @@ final def JC_SELECTED = JC304
 
 javacard {
 
+    //noinspection GroovyAssignabilityCheck
     config {
         jckit JC_SELECTED
 
@@ -76,6 +77,7 @@ javacard {
                 aid '01:02:03:04:05:06:07:08:09:01:02'
             }
 
+            //noinspection GroovyAssignabilityCheck
             dependencies {
                 remote 'fr.bmartel:gplatform:2.1.1'
             }

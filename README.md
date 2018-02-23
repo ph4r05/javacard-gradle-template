@@ -7,10 +7,9 @@ This is simple JavaCard project template using Gradle build system.
 You can develop your JavaCard applets and build cap files with the Gradle!
 Moreover the project template enables you to test the applet with [JCardSim] or on the physical cards.
 
-Gradle project contains 2 modules:
+Gradle project contains one modules:
 
-- `applet`: contains the javacard applet. This one is buildable to CAP file.
-- `tester`: contains helper classes and main Test class which uses the main applet file.
+- `applet`: contains the javacard applet. Can be used both for testing and building CAPs.
 
 Features:
  - Gradle build (CLI / IntelliJ Idea)
@@ -38,7 +37,7 @@ git clone --recursive https://github.com/ph4r05/javacard-gradle-template.git
 
 - Implement your applet in the `applet` module.
 
-- Implement tests in the `tester` module.
+- Implement tests.
 
 - Run Gradle wrapper `./gradlew` on Unix-like system or `./gradlew.bat` on Windows
 to build the project for the first time (Gradle will be downloaded if not installed).

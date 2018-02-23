@@ -25,7 +25,7 @@ final def JC305 = libsSdk + '/jc305u1_kit'
 final def GP211 = libs + '/globalplatform-2_1_1'
 
 // Which JavaCard SDK to use - select
-final def JC_SELECTED = JC305
+final def JC_SELECTED = JC304
 
 // Maven repository + local libs file
 repositories {
@@ -62,6 +62,18 @@ ant.taskdef(name: 'javacard',
         classname: 'pro.javacard.ant.JavaCard',
         classpath: configurations.ant_javacard.asPath
 )
+
+sourceSets {
+    test {
+        /* Gradle prepends automatically all compile dependencies to the testCompile and testRuntime
+         * configuration. So the java card api.jar needs to be filtered from the class path otherwise
+         * it couldn't be overwritten by jcardsim.
+         *
+         * In the longterm this might be solvable in javaCard gradle plugin.
+         */
+        runtimeClasspath = project.sourceSets.test.runtimeClasspath.filter { !it.path.endsWith("lib/api.jar") }
+    }
+}
 
 // Gradle task for building cap files.
 // Current version builds one cap file for the main applet.

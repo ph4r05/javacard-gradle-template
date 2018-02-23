@@ -1,4 +1,4 @@
-group 'aaop'
+group 'javacard'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'

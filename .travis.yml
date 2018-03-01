@@ -1,9 +1,18 @@
-language: java
+sudo: required
 
-jdk:
-  - oraclejdk8
+addons:
+  apt:
+    packages:
+      - docker-ce
+
+services:
+  - docker
+
+before_script:
+  - docker build -t cryptocard .
 
 script:
-  - ./gradlew check --info
-  - ./gradlew buildJavaCard --info
+  - docker run --user 0 cryptocard gradle check --info
 
+notifications:
+  email: false

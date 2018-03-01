@@ -13,7 +13,6 @@ before_script:
 
 script:
   - docker run --user 0 cryptocard gradle check --info
-  - docker run --user 0 cryptocard gradle test --info
 
 notifications:
   email: false

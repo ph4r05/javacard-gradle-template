@@ -9,11 +9,11 @@ services:
   - docker
 
 before_script:
-  - docker build -t cryptocard .
+  - docker build -t half2me/cryptocard .
 
 script:
   - docker run cryptocard gradle check --info
-  - docker run cryptocard gradle buildJavaCard --info
+  - docker run cryptocard gradle test --info
 
 notifications:
   email: false

@@ -8,9 +8,12 @@ addons:
 services:
   - docker
 
+before_script:
+  - docker build -t cryptocard .
+
 script:
-  - docker run gradle:4.5.1-jdk8 gradle check --info
-  - docker run gradle:4.5.1-jdk8 gradle buildJavaCard --info
+  - docker run cryptocard gradle check --info
+  - docker run cryptocard gradle buildJavaCard --info
 
 notifications:
   email: false

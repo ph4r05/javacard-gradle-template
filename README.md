@@ -32,7 +32,7 @@ Running in IntelliJ Idea gives you a nice benefit: *Coverage*!
 - Clone this template repository:
 
 ```
-git clone --recursive https://github.com/ph4r05/javacard-gradle-template.git
+git clone --recursive https://github.com/crocs-muni/javacard-gradle-template-edu.git
 ```
 
 - Implement your applet in the `applet` module.

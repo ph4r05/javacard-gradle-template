@@ -12,8 +12,8 @@ before_script:
   - docker build -t cryptocard .
 
 script:
-  - docker run cryptocard gradle check --info
-  - docker run cryptocard gradle test --info
+  - docker run cryptocard gradle check --info --debug
+  - docker run cryptocard gradle test --info --debug
 
 notifications:
   email: false

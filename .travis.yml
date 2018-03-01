@@ -1,9 +1,17 @@
-language: java
+sudo: required
 
-jdk:
-  - oraclejdk8
+addons:
+  apt:
+    packages:
+      - docker-ce
+
+services:
+  - docker
+
+
+before_install:
+  - docker run -d gradle:4.5.1-jdk8
+  - docker ps -a
 
 script:
-  - ./gradlew check --info
-  - ./gradlew cap --info
-
+  - sh "echo not much yet"

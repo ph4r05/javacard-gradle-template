@@ -9,7 +9,8 @@ services:
   - docker
 
 script:
-  - docker run gradle:4.5.1-jdk8
+  - docker run gradle:4.5.1-jdk8 gradle check --info
+  - docker run gradle:4.5.1-jdk8 gradle buildJavaCard --info
 
 notifications:
   email: false

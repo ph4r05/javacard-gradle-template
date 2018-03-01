@@ -1,3 +1,5 @@
+package tests;
+
 import applet.MainApplet;
 import com.licel.jcardsim.base.Simulator;
 import javacard.framework.AID;
@@ -21,7 +23,7 @@ public class AppletTest {
     private Simulator simulator;
     private byte[] appletAIDBytes;
     private AID appletAID;
-    
+
     public AppletTest() {
         this.simulator = new Simulator();
         this.appletAIDBytes = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9};

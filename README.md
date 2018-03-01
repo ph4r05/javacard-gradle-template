@@ -7,10 +7,9 @@ This is simple JavaCard project template using Gradle build system.
 You can develop your JavaCard applets and build cap files with the Gradle!
 Moreover the project template enables you to test the applet with [JCardSim] or on the physical cards.
 
-Gradle project contains 2 modules:
+Gradle project contains one module:
 
-- `applet`: contains the javacard applet. This one is buildable to CAP file.
-- `tester`: contains helper classes and main Test class which uses the main applet file.
+- `applet`: contains the javacard applet. Can be used both for testing and building CAP
 
 Features:
  - Gradle build (CLI / IntelliJ Idea)
@@ -38,19 +37,17 @@ git clone --recursive https://github.com/ph4r05/javacard-gradle-template.git
 
 - Implement your applet in the `applet` module.
 
-- Implement tests in the `tester` module.
-
 - Run Gradle wrapper `./gradlew` on Unix-like system or `./gradlew.bat` on Windows
 to build the project for the first time (Gradle will be downloaded if not installed).
 
 ## Building cap
 
-- Setup your Applet ID (`AID`) in the `./applet/build.gradle` variable `appletId`.
+- Setup your Applet ID (`AID`) in the `./applet/build.gradle`.
 
-- Run the `cap` task:
+- Run the `buildJavaCard` task:
 
 ```
-./gradlew cap  --info --rerun-tasks
+./gradlew buildJavaCard  --info --rerun-tasks
 ```
 
 Generates a new cap file `./applet/out/cap/applet.cap`
@@ -81,7 +78,7 @@ Typical output:
 ## Running tests
 
 ```
-./gradlew :tester:test --info --rerun-tasks
+./gradlew test --info --rerun-tasks
 ```
 
 Output:
@@ -100,6 +97,7 @@ Gradle suite > Gradle test > AppletTest.hello STANDARD_OUT
 
 This project uses mainly:
 
+- https://github.com/bertrandmartel/javacard-gradle-plugin
 - https://github.com/martinpaljak/ant-javacard
 - https://github.com/martinpaljak/oracle_javacard_sdks
 - https://github.com/licel/jcardsim
@@ -126,7 +124,6 @@ results out of the box.
 You can see the test coverage on your applet code.
 
 - Go to Gradle plugin in IntelliJ Idea
-- Navigate to `:tester` project
 - Tasks -> verification -> test
 - Right click - run with coverage.
 

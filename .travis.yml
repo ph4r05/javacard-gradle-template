@@ -9,7 +9,7 @@ services:
   - docker
 
 before_script:
-  - docker build -t half2me/cryptocard .
+  - docker build -t cryptocard .
 
 script:
   - docker run cryptocard gradle check --info

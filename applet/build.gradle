@@ -27,20 +27,25 @@ repositories {
     flatDir {
         dirs libs
     }
+    maven {
+        url  "https://dl.bintray.com/ph4r05/jcard"
+    }
 }
 
 // Dependencies for your project
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile 'org.testng:testng:6.1.1'
-
     testCompile group: 'com.klinec', name: 'javacard-tools', version: '0.0.1', transitive: false
-    // jcardsim 'com.licel:jcardsim:3.0.4'
 }
 
 test {
     useTestNG()
     jvmArgs '-noverify'
+
+    dependencies {
+        compile 'junit:junit:4.12'
+        compile 'com.licel:jcardsim:3.0.5'
+    }
 }
 
 // JavaCard SDKs and libraries
@@ -61,10 +66,8 @@ javacard {
     config {
         jckit JC_SELECTED
 
-        // JCardSim automatically added by the javacard-gradle plugin
-        addSurrogateJcardSimRepo true
-        addImplicitJcardSim true
-        addImplicitJcardSimJunit true
+        // Using custom repo with jcardsim
+        addSurrogateJcardSimRepo false
 
         //noinspection GroovyAssignabilityCheck
         cap {
@@ -81,7 +84,7 @@ javacard {
 
             //noinspection GroovyAssignabilityCheck
             dependencies {
-                remote 'fr.bmartel:gplatform:2.1.1'
+                remote 'com.klinec:globalplatform:2.1.1'
             }
         }
     }

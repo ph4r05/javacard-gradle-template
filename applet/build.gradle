@@ -40,16 +40,13 @@ repositories {
 dependencies {
     testCompile 'org.testng:testng:6.1.1'
     testCompile group: 'com.klinec', name: 'javacard-tools', version: '0.0.1', transitive: false
+
+    jcardsim 'com.licel:jcardsim:3.0.5'
 }
 
 test {
     useTestNG()
     jvmArgs '-noverify'
-
-    dependencies {
-        compile 'junit:junit:4.12'
-        compile 'com.licel:jcardsim:3.0.5'
-    }
 }
 
 // JavaCard SDKs and libraries
@@ -72,6 +69,8 @@ javacard {
 
         // Using custom repo with jcardsim
         addSurrogateJcardSimRepo false
+        addImplicitJcardSim false
+        addImplicitJcardSimJunit false
 
         //noinspection GroovyAssignabilityCheck
         cap {

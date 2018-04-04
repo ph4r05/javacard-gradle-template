@@ -8,7 +8,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.klinec:gradle-javacard:1.5.5'
+        classpath 'com.klinec:gradle-javacard:1.5.7'
     }
 }
 
@@ -24,6 +24,13 @@ final def libsSdk = rootPath + '/libs-sdks'
 repositories {
     mavenCentral()
     // mavenLocal() // for local maven repository if needed
+
+    // Repository with JCardSim, Globalplatform, etc, ...
+    maven {
+        url  "https://dl.bintray.com/ph4r05/jcard"
+    }
+
+    // Local lib repository
     flatDir {
         dirs libs
     }
@@ -31,15 +38,17 @@ repositories {
 
 // Dependencies for your project
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile 'org.testng:testng:6.1.1'
-    
-    // jcardsim 'com.licel:jcardsim:3.0.4'
 }
 
 test {
     useTestNG()
     jvmArgs '-noverify'
+
+    dependencies {
+        compile 'junit:junit:4.12'
+        compile 'com.licel:jcardsim:3.0.5'
+    }
 }
 
 // JavaCard SDKs and libraries
@@ -49,9 +58,10 @@ final def JC222 = libsSdk + '/jc222_kit'
 final def JC303 = libsSdk + '/jc303_kit'
 final def JC304 = libsSdk + '/jc304_kit'
 final def JC305 = libsSdk + '/jc305u1_kit'
+final def JC305u2 = libsSdk + '/jc305u2_kit'
 
 // Which JavaCard SDK to use - select
-final def JC_SELECTED = JC304
+final def JC_SELECTED = JC222
 
 javacard {
 
@@ -59,10 +69,8 @@ javacard {
     config {
         jckit JC_SELECTED
 
-        // JCardSim automatically added by the javacard-gradle plugin
-        addSurrogateJcardSimRepo true
-        addImplicitJcardSim true
-        addImplicitJcardSimJunit true
+        // Using custom repo with jcardsim
+        addSurrogateJcardSimRepo false
 
         //noinspection GroovyAssignabilityCheck
         cap {
@@ -79,7 +87,7 @@ javacard {
 
             //noinspection GroovyAssignabilityCheck
             dependencies {
-                remote 'fr.bmartel:gplatform:2.1.1'
+                remote 'com.klinec:globalplatform:2.1.1'
             }
         }
     }

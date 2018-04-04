@@ -39,16 +39,13 @@ repositories {
 // Dependencies for your project
 dependencies {
     testCompile 'org.testng:testng:6.1.1'
+
+    jcardsim 'com.licel:jcardsim:3.0.5'
 }
 
 test {
     useTestNG()
     jvmArgs '-noverify'
-
-    dependencies {
-        compile 'junit:junit:4.12'
-        compile 'com.licel:jcardsim:3.0.5'
-    }
 }
 
 // JavaCard SDKs and libraries
@@ -71,6 +68,8 @@ javacard {
 
         // Using custom repo with jcardsim
         addSurrogateJcardSimRepo false
+        addImplicitJcardSim false
+        addImplicitJcardSimJunit false
 
         //noinspection GroovyAssignabilityCheck
         cap {

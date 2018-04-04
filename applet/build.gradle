@@ -24,11 +24,15 @@ final def libsSdk = rootPath + '/libs-sdks'
 repositories {
     mavenCentral()
     // mavenLocal() // for local maven repository if needed
-    flatDir {
-        dirs libs
-    }
+
+    // Repository with JCardSim, Globalplatform, etc, ...
     maven {
         url  "https://dl.bintray.com/ph4r05/jcard"
+    }
+
+    // Local lib repository
+    flatDir {
+        dirs libs
     }
 }
 

@@ -36,12 +36,10 @@ public class MainApplet extends Applet implements MultiSelectable
 		apdu.setOutgoingAndSend((short)0, BUFFER_SIZE);
 	}
 
-	@Override
 	public boolean select(boolean b) {
 		return true;
 	}
 
-	@Override
 	public void deselect(boolean b) {
 
 	}

@@ -8,7 +8,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.klinec:gradle-javacard:1.5.8'
+        classpath 'com.klinec:gradle-javacard:1.5.9'
     }
 }
 

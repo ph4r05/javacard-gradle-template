@@ -8,7 +8,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.klinec:gradle-javacard:1.6.1'
+        classpath 'com.klinec:gradle-javacard:1.6.3'
     }
 }
 
@@ -41,7 +41,9 @@ dependencies {
     testCompile 'org.testng:testng:6.1.1'
     testCompile group: 'com.klinec', name: 'javacard-tools', version: '0.0.1', transitive: false
 
-    jcardsim 'com.licel:jcardsim:3.0.5'
+    jcardsim 'com.klinec:jcardsim:3.0.5.4'
+
+    compile 'com.github.martinpaljak:globalplatformpro:18.09.14'
 }
 
 test {
@@ -86,9 +88,9 @@ javacard {
             }
 
             //noinspection GroovyAssignabilityCheck
-            dependencies {
-                remote 'com.klinec:globalplatform:2.1.1'
-            }
+            // dependencies {
+            //     remote 'com.klinec:globalplatform:2.1.1'
+            // }
         }
     }
 }

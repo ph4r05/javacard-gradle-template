@@ -17,6 +17,8 @@ The artifact group is ignored, artifact is searched just by the name.
  
 For subdirectories you have to use the `files()` or `fileTree` as demonstrated below.
 
+Java 8+ is required.
+
 ## Custom JCardSim
 
 If you want to use custom JCardSim version place your jar in the `libs` directory, e.g., as

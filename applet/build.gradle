@@ -39,7 +39,7 @@ repositories {
 // Dependencies for your project
 dependencies {
     testCompile 'org.testng:testng:6.1.1'
-    testCompile group: 'com.klinec', name: 'javacard-tools', version: '0.0.1', transitive: false
+    testCompile group: 'com.klinec', name: 'javacard-tools', version: '0.0.2', transitive: false
 
     jcardsim 'com.klinec:jcardsim:3.0.5.5'
 

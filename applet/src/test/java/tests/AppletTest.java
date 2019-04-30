@@ -3,6 +3,7 @@ package tests;
 import org.junit.Assert;
 import org.testng.annotations.*;
 
+import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
 
 /**
@@ -11,7 +12,7 @@ import javax.smartcardio.ResponseAPDU;
  *
  * @author xsvenda, Dusan Klinec (ph4r05)
  */
-public class AppletTest {
+public class AppletTest extends BaseTest {
     
     public AppletTest() {
     }
@@ -35,7 +36,8 @@ public class AppletTest {
     // Example test
     @Test
     public void hello() throws Exception {
-        final ResponseAPDU responseAPDU = SimpleAPDU.demoSingleCommand();
+        final CommandAPDU cmd = new CommandAPDU(0x00, 0x90, 0, 0);
+        final ResponseAPDU responseAPDU = connect().transmit(cmd);
         Assert.assertNotNull(responseAPDU);
         Assert.assertEquals(0x9000, responseAPDU.getSW());
         Assert.assertNotNull(responseAPDU.getBytes());

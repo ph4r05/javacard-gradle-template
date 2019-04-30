@@ -40,7 +40,7 @@ repositories {
 dependencies {
     testCompile 'org.testng:testng:6.1.1'
 
-    jcardsim 'com.klinec:jcardsim:3.0.5.4'
+    jcardsim 'com.klinec:jcardsim:3.0.5.5'
 
     compile 'com.github.martinpaljak:globalplatformpro:18.09.14'
 }

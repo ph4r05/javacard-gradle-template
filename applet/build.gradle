@@ -41,7 +41,7 @@ dependencies {
     testCompile 'org.testng:testng:6.1.1'
     testCompile group: 'com.klinec', name: 'javacard-tools', version: '0.0.1', transitive: false
 
-    jcardsim 'com.klinec:jcardsim:3.0.5.4'
+    jcardsim 'com.klinec:jcardsim:3.0.5.5'
 
     compile 'com.github.martinpaljak:globalplatformpro:18.09.14'
 }

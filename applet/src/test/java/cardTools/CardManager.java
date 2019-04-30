@@ -18,7 +18,12 @@ public class CardManager {
     protected Long lastTransmitTime = (long) 0;
     protected CommandAPDU lastCommand = null;
     protected CardChannel channel = null;
-    
+
+    /**
+     * Add LC=0 byte to the APDU.
+     */
+    protected boolean fixLc = true;
+
     public CardManager(boolean bDebug, byte[] appletAID) {
         this.bDebug = bDebug;
         this.appletId = appletAID;
@@ -52,14 +57,14 @@ public class CardManager {
             default:
                 channel = null;
                 bConnected = false;
-                
+
         }
         if (channel != null) {
             bConnected = true;
         }
         return bConnected;
     }
-    
+
     public void Disconnect(boolean bReset) throws CardException {
         channel.getCard().disconnect(bReset); // Disconnect from the card
     }
@@ -140,12 +145,16 @@ public class CardManager {
             return null;
         }
     }
-    
+
     public ResponseAPDU transmit(CommandAPDU cmd)
             throws CardException {
 
+        if (isFixLc()){
+            cmd = fixApduLc(cmd);
+        }
+
         lastCommand = cmd;
-        if (bDebug == true) {
+        if (bDebug) {
             log(cmd);
         }
 
@@ -154,7 +163,7 @@ public class CardManager {
         elapsed += System.currentTimeMillis();
         lastTransmitTime = elapsed;
 
-        if (bDebug == true) {
+        if (bDebug) {
             log(response, lastTransmitTime);
         }
 
@@ -175,6 +184,21 @@ public class CardManager {
         } else {
             System.out.printf("<-- %s [%d ms]\n", swStr, time);
         }
+    }
+
+    private CommandAPDU fixApduLc(CommandAPDU cmd){
+        if (cmd.getNc() != 0){
+            return cmd;
+        }
+
+        byte[] apdu = new byte[] {
+                (byte)cmd.getCLA(),
+                (byte)cmd.getINS(),
+                (byte)cmd.getP1(),
+                (byte)cmd.getP2(),
+                (byte)0
+        };
+        return new CommandAPDU(apdu);
     }
 
     private void log(ResponseAPDU response) {
@@ -235,6 +259,15 @@ public class CardManager {
 
     public CardManager setChannel(CardChannel channel) {
         this.channel = channel;
+        return this;
+    }
+
+    public boolean isFixLc() {
+        return fixLc;
+    }
+
+    public CardManager setFixLc(boolean fixLc) {
+        this.fixLc = fixLc;
         return this;
     }
 }

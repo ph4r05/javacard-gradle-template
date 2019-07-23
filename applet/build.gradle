@@ -8,12 +8,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.klinec:gradle-javacard:1.6.3'
+        classpath 'com.klinec:gradle-javacard:1.6.8'
     }
 }
 
 apply plugin: 'javacard'
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 
 // Common settings, definitions
 final def rootPath = rootDir.absolutePath
@@ -39,15 +39,37 @@ repositories {
 // Dependencies for your project
 dependencies {
     testCompile 'org.testng:testng:6.1.1'
-
-    jcardsim 'com.klinec:jcardsim:3.0.5.5'
-
-    compile 'com.github.martinpaljak:globalplatformpro:18.09.14'
+    testCompile 'org.slf4j:slf4j-api:1.7.2'
+    testCompile 'org.slf4j:slf4j-log4j12:1.7.2'
+    testCompile 'org.apache.logging.log4j:log4j-core:2.11.2'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.1.1'
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.1.1'
+    
+    jcardsim 'com.klinec:jcardsim:3.0.5.6'
+    
+    // Include plugin as it has bundled GP & other tools.
+    // Alternative: include GP manually, but the included
+    // version has to be compatible with the plugin.
+    runtimeOnly 'com.klinec:gradle-javacard:1.6.8'
 }
 
 test {
-    useTestNG()
+    // useTestNG()
     jvmArgs '-noverify'
+
+    useJUnitPlatform {
+        excludeTags 'manual'
+    }
+
+    task manualTests(type: Test) {
+        jvmArgs '-noverify'
+        useJUnitPlatform {
+            includeTags 'manual'
+        }
+        check.dependsOn it
+        shouldRunAfter test
+    }
 }
 
 // JavaCard SDKs and libraries
@@ -69,6 +91,7 @@ javacard {
         jckit JC_SELECTED
 
         // Using custom repo with jcardsim
+        debugGpPro true
         addSurrogateJcardSimRepo false
         addImplicitJcardSim false
         addImplicitJcardSimJunit false

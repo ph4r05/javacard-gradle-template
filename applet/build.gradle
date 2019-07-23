@@ -8,7 +8,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.klinec:gradle-javacard:1.6.3'
+        classpath 'com.klinec:gradle-javacard:1.6.8'
     }
 }
 
@@ -41,9 +41,12 @@ dependencies {
     testCompile 'org.testng:testng:6.1.1'
     testCompile group: 'com.klinec', name: 'javacard-tools', version: '0.0.2', transitive: false
 
-    jcardsim 'com.klinec:jcardsim:3.0.5.5'
-
-    compile 'com.github.martinpaljak:globalplatformpro:18.09.14'
+    jcardsim 'com.klinec:jcardsim:3.0.5.6'
+    
+    // Include plugin as it has bundled GP & other tools.
+    // Alternative: include GP manually, but the included
+    // version has to be compatible with the plugin.
+    runtimeOnly 'com.klinec:gradle-javacard:1.6.8'
 }
 
 test {

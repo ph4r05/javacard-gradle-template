@@ -13,7 +13,7 @@ buildscript {
 }
 
 apply plugin: 'javacard'
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 
 // Common settings, definitions
 final def rootPath = rootDir.absolutePath
@@ -93,6 +93,7 @@ javacard {
         jckit JC_SELECTED
 
         // Using custom repo with jcardsim
+        debugGpPro true
         addSurrogateJcardSimRepo false
         addImplicitJcardSim false
         addImplicitJcardSimJunit false

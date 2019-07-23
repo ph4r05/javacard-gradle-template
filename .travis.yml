@@ -1,5 +1,5 @@
 language: java
-jdk: oraclejdk8
+jdk: oraclejdk11
 script:
   - ./gradlew check --info
   - ./gradlew buildJavaCard --info

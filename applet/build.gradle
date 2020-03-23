@@ -48,7 +48,7 @@ dependencies {
     
     testCompile group: 'com.klinec', name: 'javacard-tools', version: '0.0.2', transitive: false
 
-    jcardsim 'com.klinec:jcardsim:3.0.5.8'
+    jcardsim 'com.klinec:jcardsim:3.0.5.9'
     
     // Include plugin as it has bundled GP & other tools.
     // Alternative: include GP manually, but the included

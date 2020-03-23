@@ -6,9 +6,10 @@ version '1.0-SNAPSHOT'
 buildscript {
     repositories {
         mavenCentral()
+        // mavenLocal()
     }
     dependencies {
-        classpath 'com.klinec:gradle-javacard:1.6.8'
+        classpath 'com.klinec:gradle-javacard:1.6.9'
     }
 }
 
@@ -38,20 +39,20 @@ repositories {
 
 // Dependencies for your project
 dependencies {
-    testCompile 'org.testng:testng:6.1.1'
-    testCompile 'org.slf4j:slf4j-api:1.7.2'
-    testCompile 'org.slf4j:slf4j-log4j12:1.7.2'
-    testCompile 'org.apache.logging.log4j:log4j-core:2.11.2'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.junit.jupiter:junit-jupiter-api:5.1.1'
-    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.1.1'
-    
-    jcardsim 'com.klinec:jcardsim:3.0.5.8'
+    testImplementation 'org.testng:testng:6.1.1'
+    testImplementation 'org.slf4j:slf4j-api:1.7.2'
+    testImplementation 'org.slf4j:slf4j-log4j12:1.7.2'
+    testImplementation 'org.apache.logging.log4j:log4j-core:2.11.2'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.1'
+
+    jcardsim 'com.klinec:jcardsim:3.0.5.9'
     
     // Include plugin as it has bundled GP & other tools.
     // Alternative: include GP manually, but the included
     // version has to be compatible with the plugin.
-    runtimeOnly 'com.klinec:gradle-javacard:1.6.8'
+    runtimeOnly 'com.klinec:gradle-javacard:1.6.9'
 }
 
 test {
@@ -80,6 +81,8 @@ final def JC303 = libsSdk + '/jc303_kit'
 final def JC304 = libsSdk + '/jc304_kit'
 final def JC305 = libsSdk + '/jc305u1_kit'
 final def JC305u2 = libsSdk + '/jc305u2_kit'
+final def JC305u3 = libsSdk + '/jc305u3_kit'
+final def JC310b43 = libsSdk + '/jc310b43_kit'
 
 // Which JavaCard SDK to use - select
 // In order to compile JC222 and lower you have to have Java SDK <= 1.8
@@ -103,6 +106,7 @@ javacard {
             version '0.1'
             aid '01:02:03:04:05:06:07:08:09'
             output 'applet.cap'
+            // javaversion '1.7'
 
             //noinspection GroovyAssignabilityCheck
             applet {

@@ -1,7 +1,7 @@
 package tests;
 
 import org.junit.Assert;
-import org.testng.annotations.*;
+import org.junit.jupiter.api.*;
 
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
@@ -17,19 +17,19 @@ public class AppletTest extends BaseTest {
     public AppletTest() {
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass() throws Exception {
     }
 
-    @BeforeMethod
+    @BeforeEach
     public void setUpMethod() throws Exception {
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDownMethod() throws Exception {
     }
 

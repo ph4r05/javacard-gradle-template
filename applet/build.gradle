@@ -1,5 +1,6 @@
 group 'test-applet'
 version '1.0-SNAPSHOT'
+apply plugin: 'com.klinec.gradle.javacard'
 
 // Buildscript configuration for the javacard-gradle plugin.
 // Do not modify this particular block. Dependencies for the project are lower.
@@ -13,7 +14,6 @@ buildscript {
     }
 }
 
-apply plugin: 'com.klinec.gradle.javacard'
 sourceCompatibility = 1.8
 
 // Common settings, definitions

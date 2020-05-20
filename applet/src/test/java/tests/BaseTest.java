@@ -56,6 +56,12 @@ public class BaseTest {
         System.setProperty("com.licel.jcardsim.object_deletion_supported", "1");
         System.setProperty("com.licel.jcardsim.sign.dsasigner.computedhash", "1");
 
+        // Set to statically seed RandomData in the applet by "02", hexcoded
+        // System.setProperty("com.licel.jcardsim.randomdata.seed", "02");
+
+        // Set to seed RandomData from the SecureRandom
+        // System.setProperty("com.licel.jcardsim.randomdata.secure", "1");
+
         // Running on physical card
         if (cardType == RunConfig.CARD_TYPE.PHYSICAL) {
             runCfg.setTestCardType(RunConfig.CARD_TYPE.PHYSICAL);

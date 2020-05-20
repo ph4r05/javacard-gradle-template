@@ -151,7 +151,7 @@ Then try running JVM with `-noverify` option.
 In the IntelliJ Idea this can be configured in the top tool bar
 with run configurations combo box -> click -> Edit Configurations -> VM Options.
 
-However, the `com.klinec:jcardsim:3.0.5.9` should not need the `-noverify`.
+However, the `com.klinec:jcardsim:3.0.5.11` should not need the `-noverify`.
 
 ## Roadmap
 

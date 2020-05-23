@@ -153,6 +153,18 @@ with run configurations combo box -> click -> Edit Configurations -> VM Options.
 
 However, the `com.klinec:jcardsim:3.0.5.11` should not need the `-noverify`.
 
+### Invalid APDU loaded
+
+You may experience error like this: `Invalid APDU loaded. You may have JC API in your classpath before JCardSim. Classpath:`
+
+This error is thrown by JCardSim which tries to load APDU class augmented with another methods. The augmented APDU version is contained in the JCardSim JAR.
+However, if `api_class.jar` from the JavaCard SDK is on the classpath before the JCardSim, this problem occurs. The classpath ordering causes non-augmented version is loaded which prevents JCardSim from correct function.
+
+gradle-javacard-plugin v1.7.1 should fix this error.
+
+If you still experience this in IntelliJ Idea try: open project structure settings -> modules -> applet_test and move JCardSim to the top so it appears first on the classpath.
+This has to be done with each project reload from the Gradle. 
+
 ## Roadmap
 
 TODOs for this project:

@@ -6,16 +6,12 @@ version '1.0-SNAPSHOT'
 buildscript {
     repositories {
         mavenCentral()
-        maven {
-            url "https://javacard.pro/maven"
-        }
-        maven {
-            url "https://deadcode.me/mvn"
-        }
+        maven { url "https://javacard.pro/maven" }
+        maven { url "https://deadcode.me/mvn" }
         // mavenLocal()
     }
     dependencies {
-        classpath 'com.klinec:gradle-javacard:1.7.2'
+        classpath 'com.klinec:gradle-javacard:1.7.4'
     }
 }
 
@@ -34,15 +30,9 @@ repositories {
     // mavenLocal() // for local maven repository if needed
 
     // Repository with JCardSim, Globalplatform, etc, ...
-    maven {
-        url  "https://dl.bintray.com/ph4r05/jcard"
-    }
-    maven {
-        url "https://javacard.pro/maven"
-    }
-    maven {
-        url "https://deadcode.me/mvn"
-    }
+    maven { url  "https://dl.bintray.com/ph4r05/jcard" }
+    maven { url "https://javacard.pro/maven" }
+    maven { url "https://deadcode.me/mvn" }
 
     // Local lib repository
     flatDir {
@@ -65,7 +55,7 @@ dependencies {
     // Include plugin as it has bundled GP & other tools.
     // Alternative: include GP manually, but the included
     // version has to be compatible with the plugin.
-    runtimeOnly 'com.klinec:gradle-javacard:1.6.9'
+    runtimeOnly 'com.klinec:gradle-javacard:1.7.4'
 }
 
 task dumpClassPath(dependsOn: ['idea']) {

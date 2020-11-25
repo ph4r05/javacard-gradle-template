@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * @author Petr Svenda, Dusan Klinec (ph4r05)
  */
 public class BaseTest {
-    private static String APPLET_AID = "0102030405060708090102";
+    private static String APPLET_AID = "01ffff0405060708090102";
     private static byte APPLET_AID_BYTE[] = Util.hexStringToByteArray(APPLET_AID);
 
     protected RunConfig.CARD_TYPE cardType = RunConfig.CARD_TYPE.JCARDSIMLOCAL;
@@ -62,10 +62,10 @@ public class BaseTest {
         // Set to seed RandomData from the SecureRandom
         // System.setProperty("com.licel.jcardsim.randomdata.secure", "1");
 
+        runCfg.setTestCardType(cardType);
+
         // Running on physical card
-        if (cardType == RunConfig.CARD_TYPE.PHYSICAL) {
-            runCfg.setTestCardType(RunConfig.CARD_TYPE.PHYSICAL);
-        } else {
+        if (cardType != RunConfig.CARD_TYPE.PHYSICAL && cardType != RunConfig.CARD_TYPE.PHYSICAL_JAVAX) {
             // Running in the simulator
             runCfg.setAppletToSimulate(MainApplet.class)
                     .setTestCardType(RunConfig.CARD_TYPE.JCARDSIMLOCAL)
@@ -73,7 +73,7 @@ public class BaseTest {
                     .setInstallData(installData);
         }
 
-        if (!cardMngr.Connect(runCfg)) {
+        if (!cardMngr.connect(runCfg)) {
             throw new RuntimeException("Connection failed");
         }
 

@@ -1,23 +1,32 @@
 package cardTools;
 
+import apdu4j.TerminalManager;
 import com.licel.jcardsim.io.CAD;
 import com.licel.jcardsim.io.JavaxSmartCardInterface;
 import javacard.framework.AID;
 
 import javax.smartcardio.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Petr Svenda
  */
 public class CardManager {
+    private final static Logger LOG = LoggerFactory.getLogger(CardManager.class);
     protected boolean bDebug = false;
     protected byte[] appletId = null;
     protected Long lastTransmitTime = (long) 0;
     protected CommandAPDU lastCommand = null;
     protected CardChannel channel = null;
+    protected boolean autoSelect = true;
+    protected ResponseAPDU selectResponse = null;
 
     /**
      * Add LC=0 byte to the APDU.
@@ -35,19 +44,23 @@ public class CardManager {
      * @return true if connected
      * @throws Exception exceptions from underlying connects
      */
-    public boolean Connect(RunConfig runCfg) throws Exception {
+    public boolean connect(RunConfig runCfg) throws Exception {
         boolean bConnected = false;
         switch (runCfg.testCardType) {
             case PHYSICAL: {
-                channel = ConnectPhysicalCard(runCfg.targetReaderIndex);
+                channel = connectPhysicalCard(runCfg.targetReaderIndex);
+                break;
+            }
+            case PHYSICAL_JAVAX: {
+                channel = connectPhysicalCardJavax(runCfg.targetReaderIndex);
                 break;
             }
             case JCOPSIM: {
-                channel = ConnectJCOPSimulator(runCfg.targetReaderIndex);
+                channel = connectJCOPSimulator(runCfg.targetReaderIndex);
                 break;
             }
             case JCARDSIMLOCAL: {
-                channel = ConnectJCardSimLocalSimulator(runCfg.appletToSimulate, runCfg.installData);
+                channel = connectJCardSimLocalSimulator(runCfg.appletToSimulate, runCfg.installData);
                 break;
             }
             case JCARDSIMREMOTE: {
@@ -65,24 +78,64 @@ public class CardManager {
         return bConnected;
     }
 
-    public void Disconnect(boolean bReset) throws CardException {
+    public void disconnect(boolean bReset) throws CardException {
         channel.getCard().disconnect(bReset); // Disconnect from the card
     }
 
-    public CardChannel ConnectPhysicalCard(int targetReaderIndex) throws Exception {
+    public CardChannel connectPhysicalCardJavax(int targetReaderIndex) throws Exception {
         // JCOP Simulators
-        System.out.print("Looking for physical cards... ");
-        return connectToCardByTerminalFactory(TerminalFactory.getDefault(), targetReaderIndex);
+        LOG.debug("Looking for physical cards... ");
+        return connectTerminalAndSelect(findCardTerminalSmartcardIO(targetReaderIndex));
     }
 
-    public CardChannel ConnectJCOPSimulator(int targetReaderIndex) throws Exception {
+    public CardChannel connectPhysicalCard(int targetReaderIndex) throws Exception {
         // JCOP Simulators
-        System.out.print("Looking for JCOP simulators...");
+        LOG.debug("Looking for physical cards... ");
+        return connectTerminalAndSelect(findCardTerminal(targetReaderIndex));
+    }
+
+    public CardChannel connectJCOPSimulator(int targetReaderIndex) throws Exception {
+        // JCOP Simulators
+        LOG.debug("Looking for JCOP simulators...");
         int[] ports = new int[]{8050};
         return connectToCardByTerminalFactory(TerminalFactory.getInstance("JcopEmulator", ports), targetReaderIndex);
     }
 
-    private CardChannel ConnectJCardSimLocalSimulator(Class appletClass, byte[] installData) throws Exception {
+    public CardTerminal findCardTerminal(int targetReaderIndex) throws CardException {
+        TerminalFactory tf = TerminalManager.getTerminalFactory();
+        String reader = System.getenv("GP_READER");
+        if (reader != null) {
+            Optional<CardTerminal> t = TerminalManager.getInstance(tf.terminals()).dwim(reader, System.getenv("GP_READER_IGNORE"), Collections.emptyList());
+            if (!t.isPresent()) {
+                throw new RuntimeException("Reader could not be found");
+            }
+            return t.get();
+        }
+
+        return findTerminalIdx(tf.terminals().list(), targetReaderIndex);
+    }
+
+    public CardTerminal findCardTerminalSmartcardIO(int targetReaderIndex) throws CardException {
+        TerminalFactory tf = TerminalFactory.getDefault();
+        return findTerminalIdx(tf.terminals().list(), targetReaderIndex);
+    }
+
+    public CardTerminal findTerminalIdx(List<CardTerminal> terminals, int targetReaderIndex) throws CardException {
+        int currIdx = -1;
+        TerminalFactory tf = TerminalFactory.getDefault();
+        for (CardTerminal t : terminals) {
+            currIdx += 1;
+            if (currIdx != targetReaderIndex){
+                continue;
+            }
+            if (t.isCardPresent()) {
+                return t;
+            }
+        }
+        throw new RuntimeException("No card terminal found");
+    }
+
+    public CardChannel connectJCardSimLocalSimulator(Class appletClass, byte[] installData) throws Exception {
         System.setProperty("com.licel.jcardsim.terminal.type", "2");
         CAD cad = new CAD(System.getProperties());
         JavaxSmartCardInterface simulator = (JavaxSmartCardInterface) cad.getCardInterface();
@@ -97,7 +150,37 @@ public class CardManager {
         return new SimulatedCardChannelLocal(simulator);
     }
 
-    private CardChannel connectToCardByTerminalFactory(TerminalFactory factory, int targetReaderIndex) throws CardException {
+    public CardChannel connectTerminalAndSelect(CardTerminal terminal) throws CardException {
+        CardChannel ch = connectTerminal(terminal);
+
+        // Select applet (mpcapplet)
+        LOG.debug("Smartcard: Selecting applet...");
+        selectResponse = selectApplet();
+
+        return ch;
+    }
+
+    public CardChannel connectTerminal(CardTerminal terminal) throws CardException {
+        LOG.debug("Connecting...");
+        Card card = terminal.connect("*"); // Connect with the card
+        if (card == null){
+            return null;
+        }
+        LOG.debug("Terminal connected");
+
+        LOG.debug("Establishing channel...");
+        channel = card.getBasicChannel();
+        LOG.debug("Channel established");
+
+        return card.getBasicChannel();
+    }
+
+    public ResponseAPDU selectApplet() throws CardException {
+        CommandAPDU cmd = new CommandAPDU(0x00, 0xa4, 0x04, 0x00, appletId);
+        return transmit(cmd);
+    }
+
+    public CardChannel connectToCardByTerminalFactory(TerminalFactory factory, int targetReaderIndex) throws CardException {
         List<CardTerminal> terminals = new ArrayList<>();
 
         boolean card_found = false;
@@ -110,44 +193,22 @@ public class CardManager {
                     card_found = true;
                 }
             }
-            System.out.println("Success.");
         } catch (Exception e) {
-            System.out.println("Failed.");
+            LOG.error("Terminal listing failed.", e);
         }
 
-        if (card_found) {
-            System.out.println("Cards found: " + terminals);
-
-            terminal = terminals.get(targetReaderIndex); // Prioritize physical card over simulations
-
-            System.out.print("Connecting...");
-            card = terminal.connect("*"); // Connect with the card
-
-            System.out.println(" Done.");
-
-            System.out.print("Establishing channel...");
-            channel = card.getBasicChannel();
-
-            System.out.println(" Done.");
-
-            // Select applet (mpcapplet)
-            System.out.println("Smartcard: Selecting applet...");
-
-            CommandAPDU cmd = new CommandAPDU(0x00, 0xa4, 0x04, 0x00, appletId);
-            ResponseAPDU response = transmit(cmd);
-        } else {
-            System.out.print("Failed to find physical card.");
-        }
-
-        if (card != null) {
-            return card.getBasicChannel();
-        } else {
+        if (!card_found) {
+            LOG.warn("Failed to find physical card.");
             return null;
         }
+
+        LOG.debug("Cards found: " + terminals);
+        terminal = terminals.get(targetReaderIndex); // Prioritize physical card over simulations
+        return connectTerminalAndSelect(terminal);
     }
 
     public ResponseAPDU transmit(CommandAPDU cmd)
-            throws CardException {
+        throws CardException {
 
         if (isFixLc()){
             cmd = fixApduLc(cmd);
@@ -170,46 +231,46 @@ public class CardManager {
         return response;
     }
 
-    private void log(CommandAPDU cmd) {
-        System.out.printf("--> %s\n", Util.toHex(cmd.getBytes()),
-                cmd.getBytes().length);
+    public void log(CommandAPDU cmd) {
+        LOG.debug(String.format("--> %s (%d B)", Util.toHex(cmd.getBytes()),
+            cmd.getBytes().length));
     }
 
-    private void log(ResponseAPDU response, long time) {
+    public void log(ResponseAPDU response, long time) {
         String swStr = String.format("%02X", response.getSW());
         byte[] data = response.getData();
         if (data.length > 0) {
-            System.out.printf("<-- %s %s (%d) [%d ms]\n", Util.toHex(data), swStr,
-                    data.length, time);
+            LOG.debug(String.format("<-- %s %s (%d) [%d ms]", Util.toHex(data), swStr,
+                data.length, time));
         } else {
-            System.out.printf("<-- %s [%d ms]\n", swStr, time);
+            LOG.debug(String.format("<-- %s [%d ms]", swStr, time));
         }
     }
 
-    private CommandAPDU fixApduLc(CommandAPDU cmd){
+    public CommandAPDU fixApduLc(CommandAPDU cmd){
         if (cmd.getNc() != 0){
             return cmd;
         }
 
         byte[] apdu = new byte[] {
-                (byte)cmd.getCLA(),
-                (byte)cmd.getINS(),
-                (byte)cmd.getP1(),
-                (byte)cmd.getP2(),
-                (byte)0
+            (byte)cmd.getCLA(),
+            (byte)cmd.getINS(),
+            (byte)cmd.getP1(),
+            (byte)cmd.getP2(),
+            (byte)0
         };
         return new CommandAPDU(apdu);
     }
 
-    private void log(ResponseAPDU response) {
+    public void log(ResponseAPDU response) {
         log(response, 0);
     }
 
-    private Card waitForCard(CardTerminals terminals)
-            throws CardException {
+    public Card waitForCard(CardTerminals terminals)
+        throws CardException {
         while (true) {
             for (CardTerminal ct : terminals
-                    .list(CardTerminals.State.CARD_INSERTION)) {
+                .list(CardTerminals.State.CARD_INSERTION)) {
 
                 return ct.connect("*");
             }
@@ -269,5 +330,17 @@ public class CardManager {
     public CardManager setFixLc(boolean fixLc) {
         this.fixLc = fixLc;
         return this;
+    }
+
+    public boolean isAutoSelect() {
+        return autoSelect;
+    }
+
+    public void setAutoSelect(boolean autoSelect) {
+        this.autoSelect = autoSelect;
+    }
+
+    public ResponseAPDU getSelectResponse() {
+        return selectResponse;
     }
 }

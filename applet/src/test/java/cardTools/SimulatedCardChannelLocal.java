@@ -1,6 +1,8 @@
 package cardTools;
 
 import com.licel.jcardsim.io.JavaxSmartCardInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.smartcardio.*;
 import java.nio.ByteBuffer;
@@ -10,9 +12,11 @@ import java.nio.ByteBuffer;
  * @author Petr Svenda
  */
 public class SimulatedCardChannelLocal extends CardChannel {
+    private final static Logger LOG = LoggerFactory.getLogger(SimulatedCardChannelLocal.class);
+
     JavaxSmartCardInterface m_simulator;
     SimulatedCard m_card;
-    
+
     SimulatedCardChannelLocal (JavaxSmartCardInterface simulator) {
         m_simulator = simulator;
         m_card = new SimulatedCard();
@@ -55,27 +59,27 @@ public class SimulatedCardChannelLocal extends CardChannel {
     public void close() throws CardException {
         m_simulator.reset();
     }
-    
-    
+
+
     private static void log(CommandAPDU cmd) {
-        System.out.printf("--> [%s] %s\n", Util.toHex(cmd.getBytes()), cmd.getBytes().length);
+        LOG.debug(String.format("--> [%s] (%s B)", Util.toHex(cmd.getBytes()), cmd.getBytes().length));
     }
 
     private static void log(ResponseAPDU response, long time) {
         String swStr = String.format("%02X", response.getSW());
         byte[] data = response.getData();
         if (data.length > 0) {
-            System.out.printf("<-- %s %s (%d)\n", Util.toHex(data), swStr,
-                    data.length);
+            LOG.debug(String.format("<-- %s %s (%d B)", Util.toHex(data), swStr,
+                data.length));
         } else {
-            System.out.printf("<-- %s\n", swStr);
+            LOG.debug(String.format("<-- %s", swStr));
         }
         if (time > 0) {
-            System.out.printf(String.format("Elapsed time %d ms\n", time));
+            LOG.debug(String.format("Elapsed time %d ms", time));
         }
     }
 
     private static void log(ResponseAPDU response) {
         log(response, 0);
-    }    
+    }
 }

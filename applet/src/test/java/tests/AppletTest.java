@@ -1,5 +1,6 @@
 package tests;
 
+import cardTools.RunConfig;
 import org.junit.Assert;
 import org.junit.jupiter.api.*;
 
@@ -15,6 +16,8 @@ import javax.smartcardio.ResponseAPDU;
 public class AppletTest extends BaseTest {
     
     public AppletTest() {
+        // Change card type here if you want to use physical card
+        setCardType(RunConfig.CARD_TYPE.JCARDSIMLOCAL);
     }
 
     @BeforeAll

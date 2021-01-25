@@ -31,7 +31,7 @@ Running in IntelliJ Idea gives you a nice benefit: *Coverage*!
 
 - Clone this template repository:
 
-```
+```bash
 git clone --recursive https://github.com/ph4r05/javacard-gradle-template.git
 ```
 
@@ -46,7 +46,7 @@ to build the project for the first time (Gradle will be downloaded if not instal
 
 - Run the `buildJavaCard` task:
 
-```
+```bash
 ./gradlew buildJavaCard  --info --rerun-tasks
 ```
 
@@ -73,6 +73,18 @@ Typical output:
 [ant:verify] javacard/framework/Applet
 [ant:verify] XII 10, 2017 10:45:05 ODP.  
 [ant:verify] INFO: Verification completed with 0 warnings and 0 errors.
+```
+
+## Installation on a card
+
+```bash
+./gradlew installJavaCard
+```
+
+Or inspect already installed applets:
+
+```bash
+./gradlew listJavaCard
 ```
 
 ## Running tests

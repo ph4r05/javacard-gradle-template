@@ -181,9 +181,9 @@ public class CardManager {
         simulator.installApplet(appletAID, appletClass, installData, (short) 0, (byte) installData.length);
         if (doSelect) {
             selectResponse = new ResponseAPDU(simulator.selectAppletWithResult(appletAID));
-            if (selectResponse.getSW() != -28672) {
-                throw new RuntimeException("Select error");
-            }
+            //if (selectResponse.getSW() != -28672) {
+            //    throw new RuntimeException("Select error");
+            //}
         }
 
         return new SimulatedCardChannelLocal(simulator);

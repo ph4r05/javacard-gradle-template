@@ -3,6 +3,8 @@ package cardTools;
 import apdu4j.TerminalManager;
 import com.licel.jcardsim.io.CAD;
 import com.licel.jcardsim.io.JavaxSmartCardInterface;
+import com.licel.jcardsim.smartcardio.CardSimulator;
+import com.licel.jcardsim.smartcardio.CardTerminalSimulator;
 import javacard.framework.AID;
 
 import javax.smartcardio.*;
@@ -11,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javacard.framework.Applet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +36,21 @@ public class CardManager {
      */
     protected boolean fixLc = true;
 
+    /**
+     * Enables to fix NE=255, required for some JCOP3 cards.
+     */
+    protected Boolean fixNe = null;
+
+    /**
+     * Default NE to add to the command
+     */
+    protected Integer defaultNe = null;
+
+    /**
+     * Perform automated select
+     */
+    protected boolean doSelect = true;
+
     public CardManager(boolean bDebug, byte[] appletAID) {
         this.bDebug = bDebug;
         this.appletId = appletAID;
@@ -46,6 +64,10 @@ public class CardManager {
      */
     public boolean connect(RunConfig runCfg) throws Exception {
         boolean bConnected = false;
+        if (appletId == null && runCfg.aid != null){
+            appletId = runCfg.aid;
+        }
+
         switch (runCfg.testCardType) {
             case PHYSICAL: {
                 channel = connectPhysicalCard(runCfg.targetReaderIndex);
@@ -60,11 +82,20 @@ public class CardManager {
                 break;
             }
             case JCARDSIMLOCAL: {
-                channel = connectJCardSimLocalSimulator(runCfg.appletToSimulate, runCfg.installData);
+                if (runCfg.simulator != null){
+                    channel = connectJCardSimLocalSimulator(runCfg.simulator);
+                } else {
+                    channel = connectJCardSimLocalSimulator(runCfg.appletToSimulate, runCfg.installData);
+                }
                 break;
             }
             case JCARDSIMREMOTE: {
                 channel = null; // Not implemented yet
+                break;
+            }
+            case REMOTE: {
+                channel = new RemoteCardChannel(runCfg);
+                maybeSelect();
                 break;
             }
             default:
@@ -83,19 +114,16 @@ public class CardManager {
     }
 
     public CardChannel connectPhysicalCardJavax(int targetReaderIndex) throws Exception {
-        // JCOP Simulators
         LOG.debug("Looking for physical cards... ");
         return connectTerminalAndSelect(findCardTerminalSmartcardIO(targetReaderIndex));
     }
 
     public CardChannel connectPhysicalCard(int targetReaderIndex) throws Exception {
-        // JCOP Simulators
         LOG.debug("Looking for physical cards... ");
         return connectTerminalAndSelect(findCardTerminal(targetReaderIndex));
     }
 
     public CardChannel connectJCOPSimulator(int targetReaderIndex) throws Exception {
-        // JCOP Simulators
         LOG.debug("Looking for JCOP simulators...");
         int[] ports = new int[]{8050};
         return connectToCardByTerminalFactory(TerminalFactory.getInstance("JcopEmulator", ports), targetReaderIndex);
@@ -135,7 +163,13 @@ public class CardManager {
         throw new RuntimeException("No card terminal found");
     }
 
-    public CardChannel connectJCardSimLocalSimulator(Class appletClass, byte[] installData) throws Exception {
+    public CardChannel connectJCardSimLocalSimulator(CardSimulator sim) throws Exception {
+        System.setProperty("com.licel.jcardsim.terminal.type", "2");
+        final CardTerminal cardTerminal = CardTerminalSimulator.terminal(sim);
+        return connectTerminalAndSelect(cardTerminal);
+    }
+
+    public CardChannel connectJCardSimLocalSimulator(Class<? extends Applet> appletClass, byte[] installData) throws Exception {
         System.setProperty("com.licel.jcardsim.terminal.type", "2");
         CAD cad = new CAD(System.getProperties());
         JavaxSmartCardInterface simulator = (JavaxSmartCardInterface) cad.getCardInterface();
@@ -144,8 +178,13 @@ public class CardManager {
         }
         AID appletAID = new AID(appletId, (short) 0, (byte) appletId.length);
 
-        AID appletAIDRes = simulator.installApplet(appletAID, appletClass, installData, (short) 0, (byte) installData.length);
-        simulator.selectApplet(appletAID);
+        simulator.installApplet(appletAID, appletClass, installData, (short) 0, (byte) installData.length);
+        if (doSelect) {
+            selectResponse = new ResponseAPDU(simulator.selectAppletWithResult(appletAID));
+            if (selectResponse.getSW() != -28672) {
+                throw new RuntimeException("Select error");
+            }
+        }
 
         return new SimulatedCardChannelLocal(simulator);
     }
@@ -154,10 +193,15 @@ public class CardManager {
         CardChannel ch = connectTerminal(terminal);
 
         // Select applet (mpcapplet)
-        LOG.debug("Smartcard: Selecting applet...");
-        selectResponse = selectApplet();
-
+        maybeSelect();
         return ch;
+    }
+
+    public void maybeSelect() throws CardException {
+        if (doSelect && appletId != null) {
+            LOG.debug("Smartcard: Selecting applet...");
+            selectResponse = selectApplet();
+        }
     }
 
     public CardChannel connectTerminal(CardTerminal terminal) throws CardException {
@@ -249,7 +293,7 @@ public class CardManager {
 
     public CommandAPDU fixApduLc(CommandAPDU cmd){
         if (cmd.getNc() != 0){
-            return cmd;
+            return fixApduNe(cmd);
         }
 
         byte[] apdu = new byte[] {
@@ -260,6 +304,24 @@ public class CardManager {
             (byte)0
         };
         return new CommandAPDU(apdu);
+    }
+
+    private CommandAPDU fixApduNe(CommandAPDU cmd) {
+        Boolean doFix = fixNe;
+        if (doFix == null) {
+            doFix = System.getProperty("cz.muni.fi.crocs.rcard.fixNe", "false").equalsIgnoreCase("true");
+        }
+        if (!doFix) {
+            return cmd;
+        }
+
+        Integer ne = defaultNe;
+        if (ne == null) {
+            ne = Integer.valueOf(System.getProperty("cz.muni.fi.crocs.rcard.defaultNe", "255"));
+        }
+
+        LOG.debug("Fixed NE for the APDU to: " + ne);
+        return new CommandAPDU(cmd.getCLA(), cmd.getINS(), cmd.getP1(), cmd.getP2(), cmd.getData(), ne);
     }
 
     public void log(ResponseAPDU response) {
@@ -342,5 +404,32 @@ public class CardManager {
 
     public ResponseAPDU getSelectResponse() {
         return selectResponse;
+    }
+
+    public boolean isDoSelect() {
+        return doSelect;
+    }
+
+    public CardManager setDoSelect(boolean doSelect) {
+        this.doSelect = doSelect;
+        return this;
+    }
+
+    public Boolean getFixNe() {
+        return fixNe;
+    }
+
+    public CardManager setFixNe(Boolean fixNe) {
+        this.fixNe = fixNe;
+        return this;
+    }
+
+    public Integer getDefaultNe() {
+        return defaultNe;
+    }
+
+    public CardManager setDefaultNe(Integer defaultNe) {
+        this.defaultNe = defaultNe;
+        return this;
     }
 }

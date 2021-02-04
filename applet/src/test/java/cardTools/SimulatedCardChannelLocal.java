@@ -17,7 +17,7 @@ public class SimulatedCardChannelLocal extends CardChannel {
     JavaxSmartCardInterface m_simulator;
     SimulatedCard m_card;
 
-    SimulatedCardChannelLocal (JavaxSmartCardInterface simulator) {
+    public SimulatedCardChannelLocal (JavaxSmartCardInterface simulator) {
         m_simulator = simulator;
         m_card = new SimulatedCard();
     }

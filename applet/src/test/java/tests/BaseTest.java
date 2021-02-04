@@ -65,7 +65,15 @@ public class BaseTest {
         runCfg.setTestCardType(cardType);
 
         // Running on physical card
-        if (cardType != RunConfig.CARD_TYPE.PHYSICAL && cardType != RunConfig.CARD_TYPE.PHYSICAL_JAVAX) {
+        if (cardType == RunConfig.CARD_TYPE.REMOTE){
+            runCfg.setRemoteAddress("http://127.0.0.1:9901");
+
+            runCfg.setRemoteCardType(RunConfig.CARD_TYPE.PHYSICAL);
+            // runCfg.setRemoteCardType(RunConfig.CARD_TYPE.JCARDSIMLOCAL);
+
+            runCfg.setAid(APPLET_AID_BYTE);  // performs select after connect
+
+        } else if (cardType != RunConfig.CARD_TYPE.PHYSICAL && cardType != RunConfig.CARD_TYPE.PHYSICAL_JAVAX) {
             // Running in the simulator
             runCfg.setAppletToSimulate(MainApplet.class)
                     .setTestCardType(RunConfig.CARD_TYPE.JCARDSIMLOCAL)

@@ -55,6 +55,9 @@ dependencies {
     testImplementation "com.github.martinpaljak:apdu4j-core:2020b1"
     testImplementation "com.github.martinpaljak:apdu4j-pcsc:20.08.12"
 
+    testImplementation "com.squareup.okhttp3:okhttp:4.9.1"
+    testImplementation 'org.json:json:20180130'
+
     // Include plugin as it has bundled GP & other tools.
     // Alternative: include GP manually, but the included
     // version has to be compatible with the plugin.

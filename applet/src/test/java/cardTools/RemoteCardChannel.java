@@ -1,7 +1,7 @@
 package cardTools;
 
-import apdu4j.HexUtils;
 import okhttp3.*;
+import org.apache.commons.codec.binary.Hex;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,18 +15,18 @@ public class RemoteCardChannel extends CardChannel {
   private final static Logger LOG = LoggerFactory.getLogger(RemoteCardChannel.class);
   public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
   private final OkHttpClient client = new OkHttpClient();
-  protected SimulatedCard m_card;
+  protected RemoteCard card;
   protected RunConfig cfg;
   protected boolean connected = false;
 
   public RemoteCardChannel(RunConfig runConfig) {
-    m_card = new SimulatedCard();
+    card = new RemoteCard();
     cfg = runConfig;
   }
 
   @Override
   public Card getCard() {
-    return m_card;
+    return card;
   }
 
   @Override
@@ -43,7 +43,7 @@ public class RemoteCardChannel extends CardChannel {
 
       log(apdu);
       final JSONObject resp = cardApdu(apdu.getBytes());
-      final byte[] apduData = HexUtils.hex2bin(resp.getString("response"));
+      final byte[] apduData = Hex.decodeHex(resp.getString("response"));
       responseAPDU = new ResponseAPDU(apduData);
       log(responseAPDU);
 
@@ -57,13 +57,14 @@ public class RemoteCardChannel extends CardChannel {
 
   @Override
   public int transmit(ByteBuffer bb, ByteBuffer bb1) throws CardException {
+    LOG.error("Accessing unimplemented transmit variant");
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public void close() throws CardException {
     try {
-      cardDisconnect();
+      cardDisconnect(true);
     } catch (IOException e) {
       throw new CardException("Disconnect failed - exception", e);
     } finally {
@@ -78,7 +79,7 @@ public class RemoteCardChannel extends CardChannel {
 
     if (cfg.remoteDisconnectPrevious) {
       LOG.debug("Disconnecting previous session");
-      cardDisconnect();
+      cardDisconnect(true);
       cardConnect();
 
     } else {
@@ -98,7 +99,7 @@ public class RemoteCardChannel extends CardChannel {
   }
 
   protected JSONObject addTarget(JSONObject req){
-    req.put("target", cfg.remoteCardType == RunConfig.CARD_TYPE.JCARDSIMLOCAL ? "sim" : "card");
+    req.put("target", cfg.remoteCardType == CardType.JCARDSIMLOCAL ? "sim" : "card");
     req.put("idx", cfg.targetReaderIndex);
     return req;
   }
@@ -121,9 +122,9 @@ public class RemoteCardChannel extends CardChannel {
     return resp;
   }
 
-  protected JSONObject cardDisconnect() throws IOException {
+  protected JSONObject cardDisconnect(Boolean reset) throws IOException {
     LOG.debug("Calling card disconnect");
-    JSONObject resp = sendJson(addTarget(new JSONObject().put("action", "disconnect")));
+    JSONObject resp = sendJson(addTarget(new JSONObject().put("action", "disconnect").put("reset", reset)));
     return resp;
   }
 
@@ -134,14 +135,14 @@ public class RemoteCardChannel extends CardChannel {
   }
 
   protected JSONObject cardSelect(byte[] aid) throws IOException {
-    LOG.debug("Calling AID select with AID: " + HexUtils.bin2hex(aid));
-    JSONObject resp = sendJson(addTarget(new JSONObject().put("action", "select").put("aid", HexUtils.bin2hex(aid))));
+    LOG.debug("Calling AID select with AID: " + Hex.encodeHexString(aid));
+    JSONObject resp = sendJson(addTarget(new JSONObject().put("action", "select").put("aid", Hex.encodeHexString(aid))));
     checkResult(resp);
     return resp;
   }
 
   protected JSONObject cardApdu(byte[] apdu) throws IOException {
-    JSONObject resp = sendJson(addTarget(new JSONObject().put("action", "send").put("apdu", HexUtils.bin2hex(apdu))));
+    JSONObject resp = sendJson(addTarget(new JSONObject().put("action", "send").put("apdu", Hex.encodeHexString(apdu))));
     checkResult(resp);
     return resp;
   }
@@ -153,9 +154,17 @@ public class RemoteCardChannel extends CardChannel {
     return resp;
   }
 
+  protected String cardProtocol() throws IOException {
+    LOG.debug("Calling cardProtocol");
+    JSONObject resp = sendJson(addTarget(new JSONObject().put("action", "protocol")));
+    checkResult(resp);
+    return resp.getString("protocol");
+  }
+
   public void checkResult(JSONObject res) {
     int result = res.getInt("result");
     if (result != 0){
+      connected = false;
       LOG.warn("RemoteCard returned invalid code: " + result);
       throw new RuntimeException("RemoteCard server returned invalid code: " + result);
     }
@@ -181,24 +190,68 @@ public class RemoteCardChannel extends CardChannel {
   }
 
   private static void log(CommandAPDU cmd) {
-    LOG.debug(String.format("--> [%s] (%s B)", Util.toHex(cmd.getBytes()), cmd.getBytes().length));
-  }
-
-  private static void log(ResponseAPDU response, long time) {
-    String swStr = String.format("%02X", response.getSW());
-    byte[] data = response.getData();
-    if (data.length > 0) {
-      LOG.debug(String.format("<-- %s %s (%d B)", Util.toHex(data), swStr,
-          data.length));
-    } else {
-      LOG.debug(String.format("<-- %s", swStr));
-    }
-    if (time > 0) {
-      LOG.debug(String.format("Elapsed time %d ms", time));
-    }
+    Util.log(LOG, cmd);
   }
 
   private static void log(ResponseAPDU response) {
-    log(response, 0);
+    Util.log(LOG, response);
   }
+
+  class RemoteCard extends Card {
+    private final Logger LOG = LoggerFactory.getLogger(RemoteCardChannel.class);
+    @Override
+    public ATR getATR() {
+      try {
+        connectIfNeeded();
+        final JSONObject resp = cardAtr();
+        return new ATR(Hex.decodeHex(resp.getString("atr")));
+      } catch (Exception e) {
+        LOG.error("ATR failed", e);
+      }
+      return null;
+    }
+
+    @Override
+    public String getProtocol() {
+      try {
+        connectIfNeeded();
+        return cardProtocol();
+      } catch (Exception e) {
+        LOG.error("ATR failed", e);
+      }
+      return null;
+    }
+
+    @Override
+    public CardChannel getBasicChannel() {
+      return RemoteCardChannel.this;
+    }
+
+    @Override
+    public CardChannel openLogicalChannel() throws CardException {
+      return RemoteCardChannel.this;
+    }
+
+    @Override
+    public void beginExclusive() throws CardException {
+      LOG.info("Asked to beginExclusive(), do nothing");
+    }
+
+    @Override
+    public void endExclusive() throws CardException {
+      LOG.info("Asked to endExclusive(), do nothing");
+    }
+
+    @Override
+    public byte[] transmitControlCommand(int controlCode, byte[] command) throws CardException {
+      LOG.error("Accessing unsupported transmitControlCommand");
+      throw new CardException("Not supported");
+    }
+
+    @Override
+    public void disconnect(boolean reset) throws CardException {
+      close();
+    }
+  }
+
 }

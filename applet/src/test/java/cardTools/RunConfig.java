@@ -19,17 +19,13 @@ public class RunConfig {
     String remoteAddress;
     boolean remoteDisconnectPrevious = false;
 
-    public enum CARD_TYPE {
-        PHYSICAL, JCOPSIM, JCARDSIMLOCAL, JCARDSIMREMOTE, PHYSICAL_JAVAX, REMOTE
-    }
-
-    public CARD_TYPE testCardType = CARD_TYPE.PHYSICAL;
-    public CARD_TYPE remoteCardType = CARD_TYPE.PHYSICAL;
+    public CardType testCardType = CardType.PHYSICAL;
+    public CardType remoteCardType = CardType.PHYSICAL;
 
     public static RunConfig getDefaultConfig() {
         RunConfig runCfg = new RunConfig();
         runCfg.targetReaderIndex = 0;
-        runCfg.testCardType = CARD_TYPE.PHYSICAL;
+        runCfg.testCardType = CardType.PHYSICAL;
         runCfg.appletToSimulate = null;
 
         return runCfg;
@@ -55,7 +51,7 @@ public class RunConfig {
         return installData;
     }
 
-    public CARD_TYPE getTestCardType() {
+    public CardType getTestCardType() {
         return testCardType;
     }
 
@@ -84,7 +80,7 @@ public class RunConfig {
         return this;
     }
 
-    public RunConfig setTestCardType(CARD_TYPE testCardType) {
+    public RunConfig setTestCardType(CardType testCardType) {
         this.testCardType = testCardType;
         return this;
     }
@@ -116,11 +112,11 @@ public class RunConfig {
         return this;
     }
 
-    public CARD_TYPE getRemoteCardType() {
+    public CardType getRemoteCardType() {
         return remoteCardType;
     }
 
-    public RunConfig setRemoteCardType(CARD_TYPE remoteCardType) {
+    public RunConfig setRemoteCardType(CardType remoteCardType) {
         this.remoteCardType = remoteCardType;
         return this;
     }

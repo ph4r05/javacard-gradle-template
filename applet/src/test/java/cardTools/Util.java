@@ -1,5 +1,9 @@
 package cardTools;
 
+import org.slf4j.Logger;
+
+import javax.smartcardio.CommandAPDU;
+import javax.smartcardio.ResponseAPDU;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -105,6 +109,27 @@ public class Util {
     public static byte[] concat(byte[] a, byte[] b, byte[] c) {
         byte[] tmp_conc = concat(a, b);
         return concat(tmp_conc, c);
+    }
 
+    public static void log(Logger log, CommandAPDU cmd) {
+        log.debug(String.format("--> [%s] (%s B)", Util.toHex(cmd.getBytes()), cmd.getBytes().length));
+    }
+
+    public static void log(Logger log, ResponseAPDU response, long time) {
+        String swStr = String.format("%02X", response.getSW());
+        byte[] data = response.getData();
+        if (data.length > 0) {
+            log.debug(String.format("<-- %s %s (%d B)", Util.toHex(data), swStr,
+                data.length));
+        } else {
+            log.debug(String.format("<-- %s", swStr));
+        }
+        if (time > 0) {
+            log.debug(String.format("Elapsed time %d ms", time));
+        }
+    }
+
+    public static void log(Logger log, ResponseAPDU response) {
+        log(log, response, 0);
     }
 }

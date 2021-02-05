@@ -2,6 +2,7 @@ package tests;
 
 import applet.MainApplet;
 import cardTools.CardManager;
+import cardTools.CardType;
 import cardTools.RunConfig;
 import cardTools.Util;
 
@@ -20,7 +21,7 @@ public class BaseTest {
     private static String APPLET_AID = "01ffff0405060708090102";
     private static byte APPLET_AID_BYTE[] = Util.hexStringToByteArray(APPLET_AID);
 
-    protected RunConfig.CARD_TYPE cardType = RunConfig.CARD_TYPE.JCARDSIMLOCAL;
+    protected CardType cardType = CardType.JCARDSIMLOCAL;
 
     protected boolean simulateStateful = false;
     protected CardManager statefulCard = null;
@@ -65,18 +66,18 @@ public class BaseTest {
         runCfg.setTestCardType(cardType);
 
         // Running on physical card
-        if (cardType == RunConfig.CARD_TYPE.REMOTE){
+        if (cardType == CardType.REMOTE){
             runCfg.setRemoteAddress("http://127.0.0.1:9901");
 
-            runCfg.setRemoteCardType(RunConfig.CARD_TYPE.PHYSICAL);
-            // runCfg.setRemoteCardType(RunConfig.CARD_TYPE.JCARDSIMLOCAL);
+            runCfg.setRemoteCardType(CardType.PHYSICAL);
+            // runCfg.setRemoteCardType(CardType.JCARDSIMLOCAL);
 
             runCfg.setAid(APPLET_AID_BYTE);  // performs select after connect
 
-        } else if (cardType != RunConfig.CARD_TYPE.PHYSICAL && cardType != RunConfig.CARD_TYPE.PHYSICAL_JAVAX) {
+        } else if (cardType != CardType.PHYSICAL && cardType != CardType.PHYSICAL_JAVAX) {
             // Running in the simulator
             runCfg.setAppletToSimulate(MainApplet.class)
-                    .setTestCardType(RunConfig.CARD_TYPE.JCARDSIMLOCAL)
+                    .setTestCardType(CardType.JCARDSIMLOCAL)
                     .setbReuploadApplet(true)
                     .setInstallData(installData);
         }
@@ -145,11 +146,11 @@ public class BaseTest {
         return resp;
     }
 
-    public RunConfig.CARD_TYPE getCardType() {
+    public CardType getCardType() {
         return cardType;
     }
 
-    public BaseTest setCardType(RunConfig.CARD_TYPE cardType) {
+    public BaseTest setCardType(CardType cardType) {
         this.cardType = cardType;
         return this;
     }
@@ -164,7 +165,7 @@ public class BaseTest {
     }
 
     public boolean isPhysical() {
-        return cardType == RunConfig.CARD_TYPE.PHYSICAL;
+        return cardType == CardType.PHYSICAL || cardType == CardType.PHYSICAL_JAVAX;
     }
 
     public boolean isStateful(){

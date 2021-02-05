@@ -60,26 +60,11 @@ public class SimulatedCardChannelLocal extends CardChannel {
         m_simulator.reset();
     }
 
-
     private static void log(CommandAPDU cmd) {
-        LOG.debug(String.format("--> [%s] (%s B)", Util.toHex(cmd.getBytes()), cmd.getBytes().length));
-    }
-
-    private static void log(ResponseAPDU response, long time) {
-        String swStr = String.format("%02X", response.getSW());
-        byte[] data = response.getData();
-        if (data.length > 0) {
-            LOG.debug(String.format("<-- %s %s (%d B)", Util.toHex(data), swStr,
-                data.length));
-        } else {
-            LOG.debug(String.format("<-- %s", swStr));
-        }
-        if (time > 0) {
-            LOG.debug(String.format("Elapsed time %d ms", time));
-        }
+        Util.log(LOG, cmd);
     }
 
     private static void log(ResponseAPDU response) {
-        log(response, 0);
+        Util.log(LOG, response);
     }
 }

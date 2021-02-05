@@ -1,0 +1,5 @@
+package cardTools;
+
+public enum CardType {
+  PHYSICAL, JCOPSIM, JCARDSIMLOCAL, JCARDSIMREMOTE, PHYSICAL_JAVAX, REMOTE
+}

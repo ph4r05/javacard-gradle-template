@@ -8,10 +8,12 @@ import com.licel.jcardsim.smartcardio.CardTerminalSimulator;
 import javacard.framework.AID;
 
 import javax.smartcardio.*;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javacard.framework.Applet;
 import org.slf4j.Logger;
@@ -24,12 +26,14 @@ import org.slf4j.LoggerFactory;
 public class CardManager {
     private final static Logger LOG = LoggerFactory.getLogger(CardManager.class);
     protected boolean bDebug = false;
+    protected AtomicBoolean isConnected = new AtomicBoolean(false);
     protected byte[] appletId = null;
     protected Long lastTransmitTime = (long) 0;
     protected CommandAPDU lastCommand = null;
     protected CardChannel channel = null;
     protected boolean autoSelect = true;
     protected ResponseAPDU selectResponse = null;
+    protected CardType lastChannelType = null;
 
     /**
      * Add LC=0 byte to the APDU.
@@ -106,24 +110,41 @@ public class CardManager {
         if (channel != null) {
             bConnected = true;
         }
+        lastChannelType = runCfg.testCardType;
+        isConnected.set(bConnected);
         return bConnected;
     }
 
-    public void disconnect(boolean bReset) throws CardException {
-        channel.getCard().disconnect(bReset); // Disconnect from the card
+    public void connectChannel(CardChannel ch){
+        channel = ch;
+        isConnected.set(ch != null);
     }
 
-    public CardChannel connectPhysicalCardJavax(int targetReaderIndex) throws Exception {
+    public void connectSimulator(CardSimulator sim) throws Exception {
+        channel = connectJCardSimLocalSimulator(sim);
+        lastChannelType = CardType.JCARDSIMLOCAL;
+        isConnected.set(true);
+    }
+
+    public void disconnect(boolean bReset) throws CardException {
+        try {
+            channel.getCard().disconnect(bReset); // Disconnect from the card
+        } finally {
+            isConnected.set(false);
+        }
+    }
+
+    public CardChannel connectPhysicalCardJavax(int targetReaderIndex) throws CardException {
         LOG.debug("Looking for physical cards... ");
         return connectTerminalAndSelect(findCardTerminalSmartcardIO(targetReaderIndex));
     }
 
-    public CardChannel connectPhysicalCard(int targetReaderIndex) throws Exception {
+    public CardChannel connectPhysicalCard(int targetReaderIndex) throws CardException {
         LOG.debug("Looking for physical cards... ");
         return connectTerminalAndSelect(findCardTerminal(targetReaderIndex));
     }
 
-    public CardChannel connectJCOPSimulator(int targetReaderIndex) throws Exception {
+    public CardChannel connectJCOPSimulator(int targetReaderIndex) throws NoSuchAlgorithmException, CardException {
         LOG.debug("Looking for JCOP simulators...");
         int[] ports = new int[]{8050};
         return connectToCardByTerminalFactory(TerminalFactory.getInstance("JcopEmulator", ports), targetReaderIndex);
@@ -263,10 +284,17 @@ public class CardManager {
             log(cmd);
         }
 
+        ResponseAPDU response = null;
         long elapsed = -System.currentTimeMillis();
-        ResponseAPDU response = channel.transmit(cmd);
-        elapsed += System.currentTimeMillis();
-        lastTransmitTime = elapsed;
+        try {
+            response = channel.transmit(cmd);
+        } catch(Exception e) {
+            isConnected.set(false);
+            throw e;
+        } finally {
+            elapsed += System.currentTimeMillis();
+            lastTransmitTime = elapsed;
+        }
 
         if (bDebug) {
             log(response, lastTransmitTime);
@@ -431,5 +459,13 @@ public class CardManager {
     public CardManager setDefaultNe(Integer defaultNe) {
         this.defaultNe = defaultNe;
         return this;
+    }
+
+    public AtomicBoolean getIsConnected() {
+        return isConnected;
+    }
+
+    public CardType getLastChannelType() {
+        return lastChannelType;
     }
 }

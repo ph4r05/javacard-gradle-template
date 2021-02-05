@@ -19,9 +19,9 @@ public class AppletTest extends BaseTest {
     public AppletTest() {
         // Change card type here if you want to use physical card
 
-//        setCardType(CardType.PHYSICAL);
-        setCardType(CardType.REMOTE);
-//        setCardType(CardType.JCARDSIMLOCAL);
+        // setCardType(CardType.PHYSICAL);
+        // setCardType(CardType.REMOTE);
+        setCardType(CardType.JCARDSIMLOCAL);
     }
 
     @BeforeAll

@@ -1,6 +1,6 @@
 package tests;
 
-import cardTools.RunConfig;
+import cz.muni.fi.crocs.rcard.client.CardType;
 import org.junit.Assert;
 import org.junit.jupiter.api.*;
 
@@ -17,7 +17,7 @@ public class AppletTest extends BaseTest {
     
     public AppletTest() {
         // Change card type here if you want to use physical card
-        setCardType(RunConfig.CARD_TYPE.JCARDSIMLOCAL);
+        setCardType(CardType.JCARDSIMLOCAL);
     }
 
     @BeforeAll

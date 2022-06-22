@@ -17,6 +17,7 @@ buildscript {
 
 apply plugin: 'com.klinec.gradle.javacard'
 apply plugin: 'idea'
+apply plugin: 'application'
 sourceCompatibility = 1.8
 
 // Common settings, definitions
@@ -42,6 +43,8 @@ repositories {
 // Dependencies for your project
 dependencies {
     jcardsim 'com.klinec:jcardsim:3.0.5.11'
+
+    implementation 'com.klinec:jcardsim:3.0.5.11'
 
     testImplementation 'org.testng:testng:6.1.1'
     testImplementation 'org.slf4j:slf4j-api:1.7.33'
@@ -72,6 +75,10 @@ task dumpClassPath(dependsOn: ['idea']) {
                 .grep(~/.*"jar:.*/).collect { it.split("[\\/]")[-3].trim() }.join("\n- ")
         println "-------\n"
     }
+}
+
+application {
+    mainClass = 'main.Run'
 }
 
 test {

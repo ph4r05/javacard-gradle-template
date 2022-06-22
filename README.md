@@ -75,7 +75,7 @@ Typical output:
 [ant:verify] INFO: Verification completed with 0 warnings and 0 errors.
 ```
 
-## Installation on a card
+## Installation on a (physical) card
 
 ```bash
 ./gradlew installJavaCard
@@ -86,6 +86,16 @@ Or inspect already installed applets:
 ```bash
 ./gradlew listJavaCard
 ```
+
+## Running on simulator (jCardSim)
+
+As simple as:
+
+```bash
+./gradlew run
+```
+
+By default the run task will run the main Java application implemented at: `main/java/main/Run.java`, using the `HelloWorldApplet` applet.
 
 ## Running tests
 

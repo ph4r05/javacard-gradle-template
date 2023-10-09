@@ -1,11 +1,13 @@
 package tests;
 
 import cz.muni.fi.crocs.rcard.client.CardType;
-import org.junit.Assert;
 import org.junit.jupiter.api.*;
 
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Example test class for the applet
@@ -41,8 +43,8 @@ public class AppletTest extends BaseTest {
     public void hello() throws Exception {
         final CommandAPDU cmd = new CommandAPDU(0x00, 0x90, 0, 0);
         final ResponseAPDU responseAPDU = connect().transmit(cmd);
-        Assert.assertNotNull(responseAPDU);
-        Assert.assertEquals(0x9000, responseAPDU.getSW());
-        Assert.assertNotNull(responseAPDU.getBytes());
+        assertNotNull(responseAPDU);
+        assertEquals(0x9000, responseAPDU.getSW());
+        assertNotNull(responseAPDU.getBytes());
     }
 }
